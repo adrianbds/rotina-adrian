@@ -14,6 +14,7 @@
     --body:"Segoe UI",system-ui,-apple-system,sans-serif;
     --mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
     --r:12px;
+    --acc:var(--fac);
   }
   @media (prefers-color-scheme:light){
     :root{ --bg:#F2F3F7; --surface:#FFFFFF; --surface-2:#F7F8FC; --line:#DDE1EC;
@@ -34,6 +35,14 @@
   .entrar a:hover{color:var(--ink);border-color:var(--ink-3)}
 
   h2{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin:28px 0 10px}
+
+  /* abas */
+  nav.abas{display:flex;gap:4px;margin-top:18px;border-bottom:1px solid var(--line)}
+  nav.abas button{appearance:none;background:none;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;
+    color:var(--ink-3);font-family:var(--display);font-size:17px;font-weight:600;padding:9px 14px;cursor:pointer}
+  nav.abas button:hover{color:var(--ink-2)}
+  nav.abas button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--acc)}
+  nav.abas button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 
   /* hoje */
   .hoje{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:6px 16px 10px;margin-top:18px}
@@ -86,8 +95,8 @@
   summary .tt b{display:block;font-size:15px;font-weight:600}
   summary .tt span{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
   summary .cont{font-family:var(--mono);font-size:12px;color:var(--ink-3)}
-  summary .cont.tudo{color:var(--fac)}
-  details.sem.atual summary .num{color:var(--fac)}
+  summary .cont.tudo{color:var(--acc)}
+  details.sem.atual summary .num{color:var(--acc)}
   .corpo{padding:0 16px 10px}
   .dia{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin:10px 0 2px}
 
@@ -116,10 +125,17 @@
   </div>
 </header>
 
+<nav class="abas" role="tablist">
+  <button type="button" role="tab" id="aba-fac" aria-selected="true">Faculdade</button>
+  <button type="button" role="tab" id="aba-eng" aria-selected="false">Inglês</button>
+</nav>
+
 <section class="hoje" id="hoje"></section>
 
+<div id="blocoPrazos">
 <h2>Prazos da faculdade</h2>
 <div class="prazos" id="prazos"></div>
+</div>
 
 <h2>Cronograma</h2>
 <div id="crono"></div>
@@ -263,7 +279,13 @@ var PRAZOS = [
 
 var ORDEM = ["seg","ter","qua","qui","sex","sab","dom"];
 var NOME_DIA = {seg:"Segunda",ter:"Terça",qua:"Quarta",qui:"Quinta",sex:"Sexta",sab:"Sábado",dom:"Domingo"};
-var TEMPO = {seg:"30 min de inglês", ter:"1h de faculdade", qua:"30 min de inglês", qui:"1h de faculdade", sab:"1h30 de faculdade + 40 min de inglês"};
+var TEMPO = {fac:{ter:"1h", qui:"1h", sab:"1h30"}, eng:{seg:"30 min", qua:"30 min", sab:"40 min"}};
+
+/* aba aberta: lembrada so neste navegador */
+var CHAVE_ABA = "rotina-adrian-aba";
+var ABA = "fac";
+try { if (localStorage.getItem(CHAVE_ABA) === "eng") ABA = "eng"; } catch(e){}
+function daAba(t){ return DISC[t.disc].cor === ABA; }
 var MES = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
 
 function dt(iso){ var p=iso.split("-"); return new Date(+p[0], +p[1]-1, +p[2]); }
@@ -329,13 +351,14 @@ function renderHoje(){
   var box = document.getElementById("hoje");
   box.innerHTML = "";
   var dHoje = ORDEM[(new Date().getDay()+6)%7];
-  var deHoje = TODAS.filter(function(t){ return t.data === HOJE; });
-  var atrasadas = TODAS.filter(function(t){ return t.data < HOJE && !feito(t.id); });
+  var minhas = TODAS.filter(daAba);
+  var deHoje = minhas.filter(function(t){ return t.data === HOJE; });
+  var atrasadas = minhas.filter(function(t){ return t.data < HOJE && !feito(t.id); });
 
   var tit = document.createElement("div"); tit.className = "titulo";
   var b = document.createElement("b"), sp = document.createElement("span");
   b.textContent = "Hoje";
-  sp.textContent = (HOJE < SEMANAS[0].de || !deHoje.length) ? "folga" : (TEMPO[dHoje] || "folga");
+  sp.textContent = (HOJE < SEMANAS[0].de || !deHoje.length) ? "folga" : (TEMPO[ABA][dHoje] || "folga");
   tit.appendChild(b); tit.appendChild(sp); box.appendChild(tit);
 
   if (deHoje.length){
@@ -343,7 +366,7 @@ function renderHoje(){
     deHoje.forEach(function(t){ ul.appendChild(linha(t, false)); });
     box.appendChild(ul);
   } else {
-    var prox = TODAS.filter(function(t){ return t.data > HOJE; })[0];
+    var prox = minhas.filter(function(t){ return t.data > HOJE; })[0];
     var p = document.createElement("p"); p.className = "folga";
     p.textContent = HOJE < SEMANAS[0].de ? "A rotina começa segunda, " + curto(SEMANAS[0].de) + ". Até lá, descanso."
       : prox ? "Dia livre. Próximo estudo: " + NOME_DIA[prox.dia].toLowerCase() + ", " + curto(prox.data) + "."
@@ -390,7 +413,7 @@ function renderCrono(){
   box.innerHTML = "";
   SEMANAS.forEach(function(s){
     var fim = soma(s.de, 6);
-    var ts = TODAS.filter(function(t){ return t.sem === s.n; });
+    var ts = TODAS.filter(function(t){ return t.sem === s.n && daAba(t); });
     var ok = ts.filter(function(t){ return feito(t.id); }).length;
     var det = document.createElement("details");
     det.className = "sem" + (HOJE >= s.de && HOJE <= fim ? " atual" : "");
@@ -399,8 +422,8 @@ function renderCrono(){
     var sum = document.createElement("summary");
     sum.innerHTML = '<span class="num"></span><span class="tt"><b></b><span></span></span><span class="cont"></span>';
     sum.querySelector(".num").textContent = "S" + s.n;
-    sum.querySelector("b").textContent = s.titulo;
-    sum.querySelector(".tt span").textContent = curto(s.de) + " a " + curto(fim) + " · + inglês";
+    sum.querySelector("b").textContent = ABA === "fac" ? s.titulo : (s.n <= 6 ? "Unidade 1" : "Unidade 2");
+    sum.querySelector(".tt span").textContent = curto(s.de) + " a " + curto(fim);
     var cont = sum.querySelector(".cont");
     cont.textContent = ok + "/" + ts.length;
     if (ok === ts.length) cont.className += " tudo";
@@ -429,7 +452,21 @@ function renderSalvo(){
     " às " + String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0");
 }
 
-function render(){ renderHoje(); renderPrazos(); renderCrono(); renderSalvo(); }
+function render(){
+  document.documentElement.style.setProperty("--acc", "var(--" + ABA + ")");
+  document.getElementById("aba-fac").setAttribute("aria-selected", ABA === "fac");
+  document.getElementById("aba-eng").setAttribute("aria-selected", ABA === "eng");
+  document.getElementById("blocoPrazos").hidden = ABA !== "fac";
+  renderHoje(); renderPrazos(); renderCrono(); renderSalvo();
+}
+
+["fac","eng"].forEach(function(a){
+  document.getElementById("aba-"+a).addEventListener("click", function(){
+    ABA = a;
+    try { localStorage.setItem(CHAVE_ABA, a); } catch(e){}
+    render();
+  });
+});
 
 (function(){
   var d = new Date();
