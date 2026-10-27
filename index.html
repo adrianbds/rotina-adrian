@@ -201,26 +201,23 @@ function ingles(n){
 }
 
 var SEMANAS = [
-  {de:"2026-10-26", titulo:"Ambientação do curso", fac:{
-    ter:[{id:"i-apostila", nome:"Apostila da disciplina", disc:"intro", a:[["Abrir", url(3860234)]]},
-         {id:"i-slides", nome:"Slides de introdução ao curso", disc:"intro", a:[["Abrir PDF", pdf(3860235)]]}],
-    qui:[{id:"i-livro", nome:"Aulas de Conceitos e Ambientação", disc:"intro", a:[["Abrir", M+"/mod/book/view.php?id=3860244"]]},
-         {id:"i-apost2", nome:"Apostila Conceitos e Ambientação", disc:"intro", a:[["Abrir PDF", pdf(3860240)]]}],
-    sab:[{id:"i-trilha", nome:"Vídeos da trilha de aprendizagem", disc:"intro", a:[["Assistir", YT+"7RYVRy32bVA&list=PLMygX6qaUk9Ibq-bsQ9-Qusrc-2Y7_CgC"]]},
-         {id:"i-forum", nome:"Fórum: ler o tema e postar", disc:"intro", a:[["Postar", forum(3860265)]]},
-         {id:"p-regul", nome:"Regulamento das avaliações", disc:"pln", a:[["Abrir PDF", pdf(4445314)]]}]
-  }},
   {de:"2026-11-02", titulo:"Introdução à IA — aulas 1 a 4", fac:{
     ter:[aula("ia",1), aula("ia",2)], qui:[aula("ia",3), aula("ia",4)],
-    sab:[{id:"ia-apostila", nome:"Apostila de Introdução à IA", disc:"ia", a:[["Abrir", url(4207702)]]}]
+    sab:[{id:"ia-apostila", nome:"Apostila de Introdução à IA", disc:"ia", a:[["Abrir", url(4207702)]]},
+         {id:"i-apostila", nome:"Apostila da disciplina", disc:"intro", a:[["Abrir", url(3860234)]]},
+         {id:"i-slides", nome:"Slides de introdução ao curso", disc:"intro", a:[["Abrir PDF", pdf(3860235)]]}]
   }},
   {de:"2026-11-09", titulo:"Introdução à IA — aulas 5 a 8", fac:{
     ter:[aula("ia",5), aula("ia",6)], qui:[aula("ia",7), aula("ia",8)],
-    sab:[{id:"ia-forum", nome:"Fórum: ler o tema e postar", disc:"ia", a:[["Postar", forum(4207733)]]}]
+    sab:[{id:"ia-forum", nome:"Fórum: ler o tema e postar", disc:"ia", a:[["Postar", forum(4207733)]]},
+         {id:"i-livro", nome:"Aulas de Conceitos e Ambientação", disc:"intro", a:[["Abrir", M+"/mod/book/view.php?id=3860244"]]},
+         {id:"i-apost2", nome:"Apostila Conceitos e Ambientação", disc:"intro", a:[["Abrir PDF", pdf(3860240)]]}]
   }},
   {de:"2026-11-16", titulo:"Arquitetura — aulas 1 a 4", fac:{
     ter:[aula("arq",1), aula("arq",2)], qui:[aula("arq",3), aula("arq",4)],
-    sab:[{id:"arq-apostila", nome:"Apostila de Arquitetura", disc:"arq", a:[["Abrir PDF", pdf(4205627)]]}]
+    sab:[{id:"arq-apostila", nome:"Apostila de Arquitetura", disc:"arq", a:[["Abrir PDF", pdf(4205627)]]},
+         {id:"i-trilha", nome:"Vídeos da trilha de aprendizagem", disc:"intro", a:[["Assistir", YT+"7RYVRy32bVA&list=PLMygX6qaUk9Ibq-bsQ9-Qusrc-2Y7_CgC"]]},
+         {id:"i-forum", nome:"Fórum: ler o tema e postar", disc:"intro", a:[["Postar", forum(3860265)]]}]
   }},
   {de:"2026-11-23", titulo:"Arquitetura — aulas 5 a 8 e rascunho das APAs", fac:{
     ter:[aula("arq",5), aula("arq",6)], qui:[aula("arq",7), aula("arq",8)],
@@ -237,7 +234,8 @@ var SEMANAS = [
   }},
   {de:"2026-12-07", titulo:"A2 e as lives de PLN", fac:{
     ter:[{id:"a2-ia", nome:"A2 — Atividade de Estudo 02", disc:"ia", prazo:"2026-12-14", a:[["Fazer", quiz(4207734)]]},
-         {id:"a2-arq", nome:"A2 — Atividade de Estudo 02", disc:"arq", prazo:"2026-12-14", a:[["Fazer", quiz(4205658)]]}],
+         {id:"a2-arq", nome:"A2 — Atividade de Estudo 02", disc:"arq", prazo:"2026-12-14", a:[["Fazer", quiz(4205658)]]},
+         {id:"p-regul", nome:"Regulamento das avaliações", disc:"pln", a:[["Abrir PDF", pdf(4445314)]]}],
     qui:[live(3), live(4), live(5)],
     sab:[{id:"rev-ia", nome:"Revisar: slides das 8 aulas", disc:"ia", a:[["Abrir", M+"/course/view.php?id=117670"]]},
          {id:"rev-arq", nome:"Revisar: slides das 8 aulas", disc:"arq", a:[["Abrir", M+"/course/view.php?id=117669"]]}]
@@ -337,7 +335,7 @@ function renderHoje(){
   var tit = document.createElement("div"); tit.className = "titulo";
   var b = document.createElement("b"), sp = document.createElement("span");
   b.textContent = "Hoje";
-  sp.textContent = TEMPO[dHoje] || "folga";
+  sp.textContent = (HOJE < SEMANAS[0].de || !deHoje.length) ? "folga" : (TEMPO[dHoje] || "folga");
   tit.appendChild(b); tit.appendChild(sp); box.appendChild(tit);
 
   if (deHoje.length){
@@ -347,7 +345,7 @@ function renderHoje(){
   } else {
     var prox = TODAS.filter(function(t){ return t.data > HOJE; })[0];
     var p = document.createElement("p"); p.className = "folga";
-    p.textContent = HOJE < SEMANAS[0].de ? "A rotina começa segunda, 26 de outubro."
+    p.textContent = HOJE < SEMANAS[0].de ? "A rotina começa segunda, " + curto(SEMANAS[0].de) + ". Até lá, descanso."
       : prox ? "Dia livre. Próximo estudo: " + NOME_DIA[prox.dia].toLowerCase() + ", " + curto(prox.data) + "."
       : "Semestre encerrado.";
     box.appendChild(p);
