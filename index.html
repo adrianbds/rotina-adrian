@@ -172,11 +172,14 @@ function forum(id){ return M+"/mod/forum/view.php?id="+id; }
 function enviarApa(id){ return M+"/mod/assign/view.php?id="+id+"&action=editsubmission"; }
 function verApa(id){ return M+"/mod/assign/view.php?id="+id; }
 function enquete(id){ return M+"/mod/feedback/complete.php?id="+id; }
+/* videoaula = o video dentro da pagina da disciplina, onde fica o "Marcar como feito" (o Moodle nao registra sozinho) */
+function noCurso(curso, mod){ return M+"/course/view.php?id="+curso+"#module-"+mod; }
 function licao(id){ return OE+"/learning/lesson.html?q="+btoa("courseId="+id+"&lessonType=MINI_LESSON"); }
 
-var VIDEO = {
-  ia: ["U1CtdPEQjvk","nTVaB-uRPmY","nhw5Y7jVnHY","X8YkMAfio98","wT2Vxh9jMc4","2BYeQbcjYjI","2ny9-frm7No","Ptvwj20TLCw"],
-  arq:["YcrHwmUcYxA","DDcMQY5CJfM","-XFIg5px3eM","dlHVt12yiWA","53_dXHwVyOE","-3gAA7c96aU","lo_FCIpn8GQ","ai99N7DhpDg"]
+var CURSO = { ia:117670, arq:117669, pln:117668, intro:117667 };
+var MOD_VIDEO = {
+  ia: [4207707,4207710,4207713,4207716,4207720,4207723,4207726,4207729],
+  arq:[4205631,4205634,4205637,4205640,4205644,4205647,4205650,4205653]
 };
 var SLIDE = {
   ia: [4207708,4207711,4207714,4207717,4207721,4207724,4207727,4207730],
@@ -187,10 +190,12 @@ var LIVE_PLN = ["tY44n3v4YMc","4rVzkVR6Cag","SsgBvq19pkw","A4hknPFBv94","lu4vZ1G
 /* id = chave das marcações salvas: nao renomear os que ja existem */
 function aula(d, n){
   return {id:d+"-aula"+n, nome:"Videoaula 0"+n, disc:d,
-          a:[["Assistir", YT+VIDEO[d][n-1]], ["Slide", pdf(SLIDE[d][n-1])]]};
+          a:[["Assistir", noCurso(CURSO[d], MOD_VIDEO[d][n-1])], ["Slide", pdf(SLIDE[d][n-1])]]};
 }
+/* so a Live 01 esta no Moodle (conferido em 03/11/2026); as outras seguem no YouTube */
 function live(n){
-  return {id:"pln-live"+n, nome:"Live 0"+n, disc:"pln", a:[["Assistir", YT+LIVE_PLN[n-1]]]};
+  var ir = n === 1 ? noCurso(CURSO.pln, 4445316) : YT+LIVE_PLN[n-1];
+  return {id:"pln-live"+n, nome:"Live 0"+n, disc:"pln", a:[["Assistir", ir]]};
 }
 
 /* lições da Unidade 1 que faltam (ids da API do Open English) */
@@ -232,7 +237,7 @@ var SEMANAS = [
   {de:"2026-11-16", titulo:"Arquitetura — aulas 1 a 4", fac:{
     ter:[aula("arq",1), aula("arq",2)], qui:[aula("arq",3), aula("arq",4)],
     sab:[{id:"arq-apostila", nome:"Apostila de Arquitetura", disc:"arq", a:[["Abrir PDF", pdf(4205627)]]},
-         {id:"i-trilha", nome:"Vídeos da trilha de aprendizagem", disc:"intro", a:[["Assistir", YT+"7RYVRy32bVA&list=PLMygX6qaUk9Ibq-bsQ9-Qusrc-2Y7_CgC"]]},
+         {id:"i-trilha", nome:"Vídeos da trilha de aprendizagem", disc:"intro", a:[["Assistir", noCurso(CURSO.intro, 3860241)]]},
          {id:"i-forum", nome:"Fórum: ler o tema e postar", disc:"intro", a:[["Postar", forum(3860265)]]}]
   }},
   {de:"2026-11-23", titulo:"Arquitetura — aulas 5 a 8 e rascunho das APAs", fac:{
