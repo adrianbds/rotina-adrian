@@ -78,7 +78,14 @@
   li.t .s em{font-style:normal;color:var(--late);font-weight:600}
   li.t.feito .n{text-decoration:line-through;color:var(--ink-3)}
   li.t.feito .btn{opacity:.5}
-  li.t .acoes{display:flex;gap:6px;flex:0 0 auto}
+  .acoes{display:flex;gap:6px;flex-wrap:wrap}
+  li.t .acoes{flex:0 0 auto;justify-content:flex-end}
+
+  /* material das disciplinas */
+  .mat{--cor:var(--fac);background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:11px 16px;margin-bottom:6px;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .mat b{font-size:15px;font-weight:600}
+  .nota{font-size:12px;color:var(--ink-3);margin:8px 0 0}
   .btn{text-decoration:none;white-space:nowrap;font-size:13px;font-weight:600;border-radius:8px;padding:7px 12px;
     background:var(--cor);color:var(--bg);border:1px solid var(--cor)}
   .btn:hover{filter:brightness(1.1)}
@@ -107,7 +114,7 @@
   @media (max-width:640px){
     .prazos{grid-template-columns:repeat(2,1fr)}
     li.t{flex-wrap:wrap}
-    li.t .acoes{width:100%;padding-left:32px}
+    li.t .acoes{width:100%;padding-left:32px;justify-content:flex-start}
   }
 </style>
 </head>
@@ -139,6 +146,12 @@
 
 <h2>Cronograma</h2>
 <div id="crono"></div>
+
+<div id="blocoMaterial">
+<h2>Disciplina vigente — material de cada uma</h2>
+<div id="material"></div>
+<p class="nota">Prazos que valem são os das atividades no Moodle. O PDF “Calendário acadêmico” mostra datas de outra turma (início em 01/09) — se bater dúvida, pergunte ao tutor.</p>
+</div>
 
 <footer>
   <span id="salvo">—</span>
@@ -193,12 +206,19 @@ function aula(d, n){
           a:[["Assistir", noCurso(CURSO[d], MOD_VIDEO[d][n-1])], ["Slide", pdf(SLIDE[d][n-1])]]};
 }
 /* so a Live 01 esta no Moodle (conferido em 03/11/2026); as outras seguem no YouTube */
+/* as 5 lives estao num bloco so do Moodle (conferido em 05/11/2026); 04 e 05 ainda vao ser ao vivo, as 19h */
+var LIVE_DURA = ["58 min","1h17","1h19"];
 function live(n){
-  var ir = n === 1 ? noCurso(CURSO.pln, 4445316) : YT+LIVE_PLN[n-1];
-  return {id:"pln-live"+n, nome:"Live 0"+n, disc:"pln", a:[["Assistir", ir]]};
+  var nome = n >= 4 ? "Live 0"+n+" — AO VIVO às 19h (perdeu? assiste a gravação)" : "Live 0"+n+" gravada ("+LIVE_DURA[n-1]+")";
+  return {id:"pln-live"+n, nome:nome, disc:"pln", a:[["Assistir", YT+LIVE_PLN[n-1]], ["No Moodle", noCurso(CURSO.pln, 4445316)]]};
+}
+/* "Apresentação da disciplina": video curto + slide, fica antes da Unidade 01 */
+function apres(d, video, slide){
+  return {id:d+"-apres", nome:"Apresentação da disciplina (vídeo de 2 min)", disc:d,
+          a:[["Assistir", noCurso(CURSO[d], video)], ["Slide", pdf(slide)]]};
 }
 
-/* lições da Unidade 1 que faltam (ids da API do Open English) */
+/* lições da Unidade 1 que faltam, na ordem (ids da API do Open English, conferidos em 05/11/2026: 8 de 20 feitas) */
 var LICOES = [
   [41998,"What Is Your Name? — parte 3"],[41999,"What Is Your Job? — parte 1"],
   [42000,"What Is Your Job? — parte 2"],[42001,"What Is Your Job? — parte 3"],
@@ -207,59 +227,73 @@ var LICOES = [
   [42006,"Yes! — parte 2"],[42007,"Yes! — parte 3"],
   [42008,"Revisão da Unidade 1"],[42009,"Quiz da Unidade 1"]
 ];
+/* semana 1 comeca na sexta (1 licao); da semana 2 em diante, 2 por semana */
 function ingles(n){
-  function li(k, slot){
-    var l = LICOES[(n-1)*2 + slot];
-    if (l) return {id:"en"+n+"-licao"+(slot+1), nome:"Lição: "+l[1], disc:"oe", a:[["Começar", licao(l[0])]]};
-    return {id:"en"+n+"-licao"+(slot+1), nome:"Próxima lição (Unidade 2)", disc:"oe", a:[["Abrir", OE+"/#lp2-lesson-carousel"]]};
+  function li(idx, slot){
+    var l = LICOES[idx], id = "en"+n+"-licao"+slot;
+    if (l) return {id:id, nome:"Lição: "+l[1], disc:"oe", a:[["Começar", licao(l[0])]]};
+    return {id:id, nome:"Próxima lição (Unidade 2)", disc:"oe", a:[["Abrir", OE+"/#lp2-lesson-carousel"]]};
   }
+  var aoVivo = {id:"en"+n+"-live", nome:"Aula ao vivo em grupo — escolha um horário", disc:"oe", a:[["Abrir", OE+"/#lp2-live-class-carousel"]]};
+  if (n === 1) return { sex:[ li(0, 1) ], sab:[ aoVivo ] };
+  var k = (n-2)*2 + 1;
   return {
-    seg:[ li(n,0) ],
-    qua:[ li(n,1),
+    seg:[ li(k, 1) ],
+    qua:[ li(k+1, 2),
           {id:"en"+n+"-pratica", nome:"Prática de pronúncia — clique no card “Em andamento”", disc:"oe", a:[["Abrir", OE+"/#lp2-practice-section"]]} ],
-    sab:[ {id:"en"+n+"-live", nome:"Aula ao vivo em grupo — escolha um horário", disc:"oe", a:[["Abrir", OE+"/#lp2-live-class-carousel"]]} ]
+    sab:[ aoVivo ]
   };
 }
 
+/* a semana 1 so tem sexta e sabado: o Adrian comeca em 6/11 (pediu em 05/11/2026) */
 var SEMANAS = [
-  {de:"2026-11-02", titulo:"Introdução à IA — aulas 1 a 4", fac:{
-    ter:[aula("ia",1), aula("ia",2)], qui:[aula("ia",3), aula("ia",4)],
-    sab:[{id:"ia-apostila", nome:"Apostila de Introdução à IA", disc:"ia", a:[["Abrir", url(4207702)]]},
+  {de:"2026-11-02", titulo:"Largada: boas-vindas e Introdução à IA 1 a 4", fac:{
+    sex:[{id:"i-agenda", nome:"Agenda semanal — horários das lives tira-dúvidas", disc:"intro", a:[["Abrir", url(3860238)]]},
+         {id:"i-boasvindas", nome:"Boas-vindas: 2 vídeos de apresentação do curso (1 min cada)", disc:"intro",
+          a:[["Vídeo 1", noCurso(CURSO.intro, 3860245)], ["Vídeo 2", noCurso(CURSO.intro, 3860247)]]},
+         apres("ia", 4207704, 4207705), aula("ia",1), aula("ia",2)],
+    sab:[aula("ia",3), aula("ia",4),
+         {id:"a1-ia", nome:"A1 — Atividade de Estudo 01 (aulas 1 a 4)", disc:"ia", prazo:"2026-12-07", a:[["Fazer", quiz(4207719)]]},
+         {id:"ia-apostila", nome:"Apostila de Introdução à IA", disc:"ia", a:[["Abrir", url(4207702)], ["PDF", pdf(4207703)]]}]
+  }},
+  {de:"2026-11-09", titulo:"Introdução à IA 5 a 8 e ambientação", fac:{
+    ter:[aula("ia",5), aula("ia",6)], qui:[aula("ia",7), aula("ia",8)],
+    sab:[{id:"ia-forum", nome:"Fórum: ler o tema e postar", disc:"ia", a:[["Postar", forum(4207733)]]},
+         {id:"i-livro", nome:"Conceitos e Ambientação: aulas, vídeo e slide", disc:"intro",
+          a:[["Aulas", M+"/mod/book/view.php?id=3860244"], ["Vídeo", noCurso(CURSO.intro, 3860241)], ["Slide", pdf(3860242)]]},
          {id:"i-apostila", nome:"Apostila da disciplina", disc:"intro", a:[["Abrir", url(3860234)]]},
          {id:"i-slides", nome:"Slides de introdução ao curso", disc:"intro", a:[["Abrir PDF", pdf(3860235)]]}]
   }},
-  {de:"2026-11-09", titulo:"Introdução à IA — aulas 5 a 8", fac:{
-    ter:[aula("ia",5), aula("ia",6)], qui:[aula("ia",7), aula("ia",8)],
-    sab:[{id:"ia-forum", nome:"Fórum: ler o tema e postar", disc:"ia", a:[["Postar", forum(4207733)]]},
-         {id:"i-livro", nome:"Aulas de Conceitos e Ambientação", disc:"intro", a:[["Abrir", M+"/mod/book/view.php?id=3860244"]]},
-         {id:"i-apost2", nome:"Apostila Conceitos e Ambientação", disc:"intro", a:[["Abrir PDF", pdf(3860240)]]}]
+  {de:"2026-11-16", titulo:"Arquitetura 1 a 4 · Live 05 de PLN ao vivo", fac:{
+    ter:[live(5)],
+    qui:[apres("arq", 4205628, 4205629), aula("arq",1), aula("arq",2)],
+    sab:[aula("arq",3), aula("arq",4),
+         {id:"a1-arq", nome:"A1 — Atividade de Estudo 01 (aulas 1 a 4)", disc:"arq", prazo:"2026-12-07", a:[["Fazer", quiz(4205643)]]},
+         {id:"arq-apostila", nome:"Apostila de Arquitetura", disc:"arq", a:[["Abrir PDF", pdf(4205627)]]}]
   }},
-  {de:"2026-11-16", titulo:"Arquitetura — aulas 1 a 4", fac:{
-    ter:[aula("arq",1), aula("arq",2)], qui:[aula("arq",3), aula("arq",4)],
-    sab:[{id:"arq-apostila", nome:"Apostila de Arquitetura", disc:"arq", a:[["Abrir PDF", pdf(4205627)]]},
-         {id:"i-trilha", nome:"Vídeos da trilha de aprendizagem", disc:"intro", a:[["Assistir", noCurso(CURSO.intro, 3860241)]]},
-         {id:"i-forum", nome:"Fórum: ler o tema e postar", disc:"intro", a:[["Postar", forum(3860265)]]}]
-  }},
-  {de:"2026-11-23", titulo:"Arquitetura — aulas 5 a 8 e rascunho das APAs", fac:{
-    ter:[aula("arq",5), aula("arq",6)], qui:[aula("arq",7), aula("arq",8)],
-    sab:[{id:"arq-forum", nome:"Fórum: ler o tema e postar", disc:"arq", a:[["Postar", forum(4205657)]]},
-         {id:"apa-ia-rasc", nome:"APA: ler o enunciado e escrever", disc:"ia", a:[["Ver enunciado", verApa(4207732)]]},
+  {de:"2026-11-23", titulo:"Arquitetura 5 e 6 · Live 04 ao vivo · rascunho das APAs", fac:{
+    ter:[live(4)],
+    qui:[aula("arq",5), aula("arq",6)],
+    sab:[{id:"apa-ia-rasc", nome:"APA: ler o enunciado e escrever", disc:"ia", a:[["Ver enunciado", verApa(4207732)]]},
          {id:"apa-arq-rasc", nome:"APA: ler o enunciado e escrever", disc:"arq", a:[["Ver enunciado", verApa(4205656)]]}]
   }},
-  {de:"2026-11-30", titulo:"Entregar APAs e A1", fac:{
+  {de:"2026-11-30", titulo:"Entregar as APAs · Arquitetura 7 e 8", fac:{
     ter:[{id:"apa-ia-env", nome:"Enviar a APA", disc:"ia", prazo:"2026-12-02", a:[["Enviar", enviarApa(4207732)]]},
          {id:"apa-arq-env", nome:"Enviar a APA", disc:"arq", prazo:"2026-12-02", a:[["Enviar", enviarApa(4205656)]]}],
-    qui:[{id:"a1-ia", nome:"A1 — Atividade de Estudo 01", disc:"ia", prazo:"2026-12-07", a:[["Fazer", quiz(4207719)]]},
-         {id:"a1-arq", nome:"A1 — Atividade de Estudo 01", disc:"arq", prazo:"2026-12-07", a:[["Fazer", quiz(4205643)]]}],
-    sab:[{id:"p-apostila", nome:"Apostila de PLN e IA", disc:"pln", a:[["Abrir", url(4445311)]]}, live(1), live(2)]
+    qui:[aula("arq",7), aula("arq",8)],
+    sab:[{id:"arq-forum", nome:"Fórum: ler o tema e postar", disc:"arq", a:[["Postar", forum(4205657)]]},
+         {id:"p-apostila", nome:"Apostila de PLN e IA", disc:"pln", a:[["Abrir", url(4445311)], ["PDF", pdf(4445310)]]},
+         live(1)]
   }},
-  {de:"2026-12-07", titulo:"A2 e as lives de PLN", fac:{
+  {de:"2026-12-07", titulo:"A2 · lives gravadas de PLN · fim da ambientação", fac:{
     ter:[{id:"a2-ia", nome:"A2 — Atividade de Estudo 02", disc:"ia", prazo:"2026-12-14", a:[["Fazer", quiz(4207734)]]},
-         {id:"a2-arq", nome:"A2 — Atividade de Estudo 02", disc:"arq", prazo:"2026-12-14", a:[["Fazer", quiz(4205658)]]},
-         {id:"p-regul", nome:"Regulamento das avaliações", disc:"pln", a:[["Abrir PDF", pdf(4445314)]]}],
-    qui:[live(3), live(4), live(5)],
-    sab:[{id:"rev-ia", nome:"Revisar: slides das 8 aulas", disc:"ia", a:[["Abrir", M+"/course/view.php?id=117670"]]},
-         {id:"rev-arq", nome:"Revisar: slides das 8 aulas", disc:"arq", a:[["Abrir", M+"/course/view.php?id=117669"]]}]
+         {id:"a2-arq", nome:"A2 — Atividade de Estudo 02", disc:"arq", prazo:"2026-12-14", a:[["Fazer", quiz(4205658)]]}],
+    qui:[live(2)],
+    sab:[live(3),
+         {id:"i-trilha", nome:"Trilha de aprendizagem: 8 vídeos de 1 min — assista em sequência", disc:"intro", a:[["Assistir", noCurso(CURSO.intro, 3860249)]]},
+         {id:"i-apost2", nome:"Apostila Conceitos e Ambientação", disc:"intro", a:[["Abrir PDF", pdf(3860240)]]},
+         {id:"i-forum", nome:"Fórum: ler o tema e postar", disc:"intro", a:[["Postar", forum(3860265)]]},
+         {id:"p-regul", nome:"Regulamento das avaliações", disc:"pln", a:[["Abrir PDF", pdf(4445314)]]}]
   }},
   {de:"2026-12-14", titulo:"Provas (prazo final: segunda, 21/12)", fac:{
     ter:[{id:"enq-ia", nome:"Enquete — sem ela a prova não abre", disc:"ia", a:[["Responder", enquete(4207735)]]},
@@ -284,7 +318,17 @@ var PRAZOS = [
 
 var ORDEM = ["seg","ter","qua","qui","sex","sab","dom"];
 var NOME_DIA = {seg:"Segunda",ter:"Terça",qua:"Quarta",qui:"Quinta",sex:"Sexta",sab:"Sábado",dom:"Domingo"};
-var TEMPO = {fac:{ter:"1h", qui:"1h", sab:"1h30"}, eng:{seg:"30 min", qua:"30 min", sab:"40 min"}};
+var TEMPO = {fac:{ter:"1h", qui:"1h", sex:"1h", sab:"1h30"}, eng:{seg:"30 min", qua:"30 min", sex:"30 min", sab:"40 min"}};
+
+/* o que fica sempre a mao de cada disciplina (secao DISCIPLINA VIGENTE do Moodle) */
+var MATERIAL = [
+  {disc:"ia", a:[["Abrir disciplina", M+"/course/view.php?id="+CURSO.ia], ["Apostila", url(4207702)], ["Avisos", forum(4207701)]]},
+  {disc:"arq", a:[["Abrir disciplina", M+"/course/view.php?id="+CURSO.arq], ["Apostila", pdf(4205627)], ["Avisos", forum(4205626)]]},
+  {disc:"pln", a:[["Abrir disciplina", M+"/course/view.php?id="+CURSO.pln], ["Apostila", url(4445311)], ["Slides das lives", M+"/mod/folder/view.php?id=4445315"], ["Avisos", forum(4445309)]]},
+  {disc:"intro", a:[["Abrir disciplina", M+"/course/view.php?id="+CURSO.intro], ["Apostila", url(3860234)], ["Agenda semanal", url(3860238)], ["Calendário", pdf(4283642)], ["Avisos", forum(3860233)]]}
+];
+var NOME_LONGO = {ia:"Introdução à Inteligência Artificial", arq:"Arquitetura de Computadores e Hardware",
+                  pln:"Processamento de Linguagem Natural e IA", intro:"Introdução ao Curso de ADS"};
 
 /* aba aberta: lembrada so neste navegador */
 var CHAVE_ABA = "rotina-adrian-aba";
@@ -308,6 +352,7 @@ SEMANAS.forEach(function(s){
     (s.eng[d]||[]).concat(s.fac[d]||[]).forEach(function(t){ t.data = data; t.dia = d; t.sem = s.n; TODAS.push(t); });
   });
 });
+var INICIO = TODAS.map(function(t){ return t.data; }).sort()[0];
 
 /* marcações */
 var CHAVE = "rotina-adrian-v1";
@@ -320,12 +365,12 @@ function salvar(){
   try { localStorage.setItem(CHAVE, JSON.stringify(estado)); } catch(e){}
 }
 
-function linha(t, mostrarData){
+function linha(t, mostrarData, onde){
   var li = document.createElement("li");
   li.className = "t" + (feito(t.id) ? " feito" : "");
   li.style.setProperty("--cor", "var(--"+DISC[t.disc].cor+")");
   var cb = document.createElement("input");
-  cb.type = "checkbox"; cb.id = "cb-"+t.id+(mostrarData?"-h":""); cb.checked = feito(t.id);
+  cb.type = "checkbox"; cb.id = "cb-"+t.id+"-"+onde; cb.checked = feito(t.id);
   cb.setAttribute("aria-label", "Feito: "+t.nome);
   cb.addEventListener("change", function(){
     if (cb.checked) estado.feitos[t.id] = true; else delete estado.feitos[t.id];
@@ -363,17 +408,17 @@ function renderHoje(){
   var tit = document.createElement("div"); tit.className = "titulo";
   var b = document.createElement("b"), sp = document.createElement("span");
   b.textContent = "Hoje";
-  sp.textContent = (HOJE < SEMANAS[0].de || !deHoje.length) ? "folga" : (TEMPO[ABA][dHoje] || "folga");
+  sp.textContent = (HOJE < INICIO || !deHoje.length) ? "folga" : (TEMPO[ABA][dHoje] || "folga");
   tit.appendChild(b); tit.appendChild(sp); box.appendChild(tit);
 
   if (deHoje.length){
     var ul = document.createElement("ul"); ul.className = "ts";
-    deHoje.forEach(function(t){ ul.appendChild(linha(t, false)); });
+    deHoje.forEach(function(t){ ul.appendChild(linha(t, false, "hoje")); });
     box.appendChild(ul);
   } else {
     var prox = minhas.filter(function(t){ return t.data > HOJE; })[0];
     var p = document.createElement("p"); p.className = "folga";
-    p.textContent = HOJE < SEMANAS[0].de ? "A rotina começa segunda, " + curto(SEMANAS[0].de) + ". Até lá, descanso."
+    p.textContent = HOJE < INICIO ? "A rotina começa " + NOME_DIA[ORDEM[(dt(INICIO).getDay()+6)%7]].toLowerCase() + ", " + curto(INICIO) + (diasAte(INICIO) === 1 ? " — amanhã." : ".")
       : prox ? "Dia livre. Próximo estudo: " + NOME_DIA[prox.dia].toLowerCase() + ", " + curto(prox.data) + "."
       : "Semestre encerrado.";
     box.appendChild(p);
@@ -384,7 +429,7 @@ function renderHoje(){
     var pp = document.createElement("p"); pp.textContent = "Ficou para trás (" + atrasadas.length + ")";
     at.appendChild(pp);
     var ul2 = document.createElement("ul"); ul2.className = "ts";
-    atrasadas.forEach(function(t){ ul2.appendChild(linha(t, true)); });
+    atrasadas.forEach(function(t){ ul2.appendChild(linha(t, true, "atras")); });
     at.appendChild(ul2); box.appendChild(at);
   }
 }
@@ -427,7 +472,7 @@ function renderCrono(){
     var sum = document.createElement("summary");
     sum.innerHTML = '<span class="num"></span><span class="tt"><b></b><span></span></span><span class="cont"></span>';
     sum.querySelector(".num").textContent = "S" + s.n;
-    sum.querySelector("b").textContent = ABA === "fac" ? s.titulo : (s.n <= 6 ? "Unidade 1" : "Unidade 2");
+    sum.querySelector("b").textContent = ABA === "fac" ? s.titulo : (s.n < SEMANAS.length ? "Unidade 1" : "Quiz da Unidade 1 e início da Unidade 2");
     sum.querySelector(".tt span").textContent = curto(s.de) + " a " + curto(fim);
     var cont = sum.querySelector(".cont");
     cont.textContent = ok + "/" + ts.length;
@@ -441,11 +486,28 @@ function renderCrono(){
       h.textContent = NOME_DIA[d] + " · " + curto(soma(s.de, k));
       corpo.appendChild(h);
       var ul = document.createElement("ul"); ul.className = "ts";
-      doDia.forEach(function(t){ ul.appendChild(linha(t, false)); });
+      doDia.forEach(function(t){ ul.appendChild(linha(t, false, "crono")); });
       corpo.appendChild(ul);
     });
     det.appendChild(corpo);
     box.appendChild(det);
+  });
+}
+
+function renderMaterial(){
+  var box = document.getElementById("material");
+  box.innerHTML = "";
+  MATERIAL.forEach(function(m){
+    var el = document.createElement("div"); el.className = "mat";
+    var b = document.createElement("b"); b.textContent = NOME_LONGO[m.disc];
+    var ac = document.createElement("div"); ac.className = "acoes";
+    m.a.forEach(function(x, i){
+      var a = document.createElement("a");
+      a.className = "btn" + (i ? " sec" : ""); a.href = x[1]; a.target = "_blank"; a.rel = "noopener";
+      a.textContent = x[0];
+      ac.appendChild(a);
+    });
+    el.appendChild(b); el.appendChild(ac); box.appendChild(el);
   });
 }
 
@@ -462,7 +524,8 @@ function render(){
   document.getElementById("aba-fac").setAttribute("aria-selected", ABA === "fac");
   document.getElementById("aba-eng").setAttribute("aria-selected", ABA === "eng");
   document.getElementById("blocoPrazos").hidden = ABA !== "fac";
-  renderHoje(); renderPrazos(); renderCrono(); renderSalvo();
+  document.getElementById("blocoMaterial").hidden = ABA !== "fac";
+  renderHoje(); renderPrazos(); renderCrono(); renderMaterial(); renderSalvo();
 }
 
 ["fac","eng"].forEach(function(a){
