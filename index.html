@@ -227,7 +227,7 @@ var LICOES = [
   [42006,"Yes! — parte 2"],[42007,"Yes! — parte 3"],
   [42008,"Revisão da Unidade 1"],[42009,"Quiz da Unidade 1"]
 ];
-/* semana 1 comeca na sexta (1 licao); da semana 2 em diante, 2 por semana */
+/* 2 licoes por semana, a partir da semana 1 */
 function ingles(n){
   function li(idx, slot){
     var l = LICOES[idx], id = "en"+n+"-licao"+slot;
@@ -235,8 +235,7 @@ function ingles(n){
     return {id:id, nome:"Próxima lição (Unidade 2)", disc:"oe", a:[["Abrir", OE+"/#lp2-lesson-carousel"]]};
   }
   var aoVivo = {id:"en"+n+"-live", nome:"Aula ao vivo em grupo — escolha um horário", disc:"oe", a:[["Abrir", OE+"/#lp2-live-class-carousel"]]};
-  if (n === 1) return { sex:[ li(0, 1) ], sab:[ aoVivo ] };
-  var k = (n-2)*2 + 1;
+  var k = (n-1)*2;
   return {
     seg:[ li(k, 1) ],
     qua:[ li(k+1, 2),
@@ -245,36 +244,35 @@ function ingles(n){
   };
 }
 
-/* a semana 1 so tem sexta e sabado: o Adrian comeca em 6/11 (pediu em 05/11/2026) */
+/* o Adrian comeca tudo na segunda 9/11 (pediu em 09/11/2026): a largada de sex/sab virou a semana 1 inteira;
+   a ambientacao foi para as quintas das semanas 2 e 3; prazos intactos */
 var SEMANAS = [
-  {de:"2026-11-02", titulo:"Largada: boas-vindas e Introdução à IA 1 a 4", fac:{
-    sex:[{id:"i-agenda", nome:"Agenda semanal — horários das lives tira-dúvidas", disc:"intro", a:[["Abrir", url(3860238)]]},
+  {de:"2026-11-09", titulo:"Largada: boas-vindas e Introdução à IA 1 a 8", fac:{
+    seg:[{id:"i-agenda", nome:"Agenda semanal — horários das lives tira-dúvidas", disc:"intro", a:[["Abrir", url(3860238)]]},
          {id:"i-boasvindas", nome:"Boas-vindas: 2 vídeos de apresentação do curso (1 min cada)", disc:"intro",
           a:[["Vídeo 1", noCurso(CURSO.intro, 3860245)], ["Vídeo 2", noCurso(CURSO.intro, 3860247)]]},
          apres("ia", 4207704, 4207705), aula("ia",1), aula("ia",2)],
-    sab:[aula("ia",3), aula("ia",4),
-         {id:"a1-ia", nome:"A1 — Atividade de Estudo 01 (aulas 1 a 4)", disc:"ia", prazo:"2026-12-07", a:[["Fazer", quiz(4207719)]]},
+    ter:[aula("ia",3), aula("ia",4),
+         {id:"a1-ia", nome:"A1 — Atividade de Estudo 01 (aulas 1 a 4)", disc:"ia", prazo:"2026-12-07", a:[["Fazer", quiz(4207719)]]}],
+    qui:[aula("ia",5), aula("ia",6)],
+    sab:[aula("ia",7), aula("ia",8),
+         {id:"ia-forum", nome:"Fórum: ler o tema e postar", disc:"ia", a:[["Postar", forum(4207733)]]},
          {id:"ia-apostila", nome:"Apostila de Introdução à IA", disc:"ia", a:[["Abrir", url(4207702)], ["PDF", pdf(4207703)]]}]
-  }},
-  /* 09/11/2026: o Adrian pediu faculdade e inglês na segunda; as aulas 5 e 6 sairam da terca */
-  {de:"2026-11-09", titulo:"Introdução à IA 5 a 8 e ambientação", fac:{
-    seg:[aula("ia",5), aula("ia",6)], qui:[aula("ia",7), aula("ia",8)],
-    sab:[{id:"ia-forum", nome:"Fórum: ler o tema e postar", disc:"ia", a:[["Postar", forum(4207733)]]},
-         {id:"i-livro", nome:"Conceitos e Ambientação: aulas, vídeo e slide", disc:"intro",
-          a:[["Aulas", M+"/mod/book/view.php?id=3860244"], ["Vídeo", noCurso(CURSO.intro, 3860241)], ["Slide", pdf(3860242)]]},
-         {id:"i-apostila", nome:"Apostila da disciplina", disc:"intro", a:[["Abrir", url(3860234)]]},
-         {id:"i-slides", nome:"Slides de introdução ao curso", disc:"intro", a:[["Abrir PDF", pdf(3860235)]]}]
   }},
   {de:"2026-11-16", titulo:"Arquitetura 1 a 4 · Live 05 de PLN ao vivo", fac:{
     ter:[live(5)],
-    qui:[apres("arq", 4205628, 4205629), aula("arq",1), aula("arq",2)],
+    qui:[apres("arq", 4205628, 4205629), aula("arq",1), aula("arq",2),
+         {id:"i-slides", nome:"Slides de introdução ao curso", disc:"intro", a:[["Abrir PDF", pdf(3860235)]]}],
     sab:[aula("arq",3), aula("arq",4),
          {id:"a1-arq", nome:"A1 — Atividade de Estudo 01 (aulas 1 a 4)", disc:"arq", prazo:"2026-12-07", a:[["Fazer", quiz(4205643)]]},
          {id:"arq-apostila", nome:"Apostila de Arquitetura", disc:"arq", a:[["Abrir PDF", pdf(4205627)]]}]
   }},
   {de:"2026-11-23", titulo:"Arquitetura 5 e 6 · Live 04 ao vivo · rascunho das APAs", fac:{
     ter:[live(4)],
-    qui:[aula("arq",5), aula("arq",6)],
+    qui:[aula("arq",5), aula("arq",6),
+         {id:"i-livro", nome:"Conceitos e Ambientação: aulas, vídeo e slide", disc:"intro",
+          a:[["Aulas", M+"/mod/book/view.php?id=3860244"], ["Vídeo", noCurso(CURSO.intro, 3860241)], ["Slide", pdf(3860242)]]},
+         {id:"i-apostila", nome:"Apostila da disciplina", disc:"intro", a:[["Abrir", url(3860234)]]}],
     sab:[{id:"apa-ia-rasc", nome:"APA: ler o enunciado e escrever", disc:"ia", a:[["Ver enunciado", verApa(4207732)]]},
          {id:"apa-arq-rasc", nome:"APA: ler o enunciado e escrever", disc:"arq", a:[["Ver enunciado", verApa(4205656)]]}]
   }},
