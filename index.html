@@ -256,8 +256,9 @@ var SEMANAS = [
          {id:"a1-ia", nome:"A1 — Atividade de Estudo 01 (aulas 1 a 4)", disc:"ia", prazo:"2026-12-07", a:[["Fazer", quiz(4207719)]]},
          {id:"ia-apostila", nome:"Apostila de Introdução à IA", disc:"ia", a:[["Abrir", url(4207702)], ["PDF", pdf(4207703)]]}]
   }},
+  /* 09/11/2026: o Adrian pediu faculdade e inglês na segunda; as aulas 5 e 6 sairam da terca */
   {de:"2026-11-09", titulo:"Introdução à IA 5 a 8 e ambientação", fac:{
-    ter:[aula("ia",5), aula("ia",6)], qui:[aula("ia",7), aula("ia",8)],
+    seg:[aula("ia",5), aula("ia",6)], qui:[aula("ia",7), aula("ia",8)],
     sab:[{id:"ia-forum", nome:"Fórum: ler o tema e postar", disc:"ia", a:[["Postar", forum(4207733)]]},
          {id:"i-livro", nome:"Conceitos e Ambientação: aulas, vídeo e slide", disc:"intro",
           a:[["Aulas", M+"/mod/book/view.php?id=3860244"], ["Vídeo", noCurso(CURSO.intro, 3860241)], ["Slide", pdf(3860242)]]},
@@ -318,7 +319,7 @@ var PRAZOS = [
 
 var ORDEM = ["seg","ter","qua","qui","sex","sab","dom"];
 var NOME_DIA = {seg:"Segunda",ter:"Terça",qua:"Quarta",qui:"Quinta",sex:"Sexta",sab:"Sábado",dom:"Domingo"};
-var TEMPO = {fac:{ter:"1h", qui:"1h", sex:"1h", sab:"1h30"}, eng:{seg:"30 min", qua:"30 min", sex:"30 min", sab:"40 min"}};
+var TEMPO = {fac:{seg:"1h", ter:"1h", qui:"1h", sex:"1h", sab:"1h30"}, eng:{seg:"30 min", qua:"30 min", sex:"30 min", sab:"40 min"}};
 
 /* o que fica sempre a mao de cada disciplina (secao DISCIPLINA VIGENTE do Moodle) */
 var MATERIAL = [
