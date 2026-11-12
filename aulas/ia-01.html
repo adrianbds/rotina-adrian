@@ -2,149 +2,197 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IA Aula 01 — Um mergulho no passado</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23101522'/%3E%3Cpath d='M12 10v12M20 10v12M12 16h8' stroke='%23F0B429' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IA 01 — Um mergulho no passado</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23101522'/%3E%3Ctext x='50%25' y='58%25' text-anchor='middle' font-size='20'%3E🍌%3C/text%3E%3C/svg%3E">
 <style>
   :root{
-    --bg:#0A0E1A; --bg2:#141B2E; --surface:#1B2338; --line:#2A3449;
-    --ink:#F0F3FC; --ink-2:#A8B2C8; --ink-3:#6F7C96;
-    --acc:#F0B429; --acc-2:#FFD56B; --azul:#6EA4FF; --vermelho:#FF6B6B;
+    --bg:#0B0F1C; --surface:#121829; --surface-2:#1A2236; --line:#2A3449;
+    --ink:#F1F3FA; --ink-2:#A8B2C8; --ink-3:#6F7C96;
+    --ia:#F0B429; --manga:#F58A2A; --xande:#F4C430; --limao:#B8D13A; --banana:#F5D54B; --uva:#8E67C4;
     --display:Candara,Optima,"Segoe UI",system-ui,sans-serif;
     --body:"Segoe UI",system-ui,-apple-system,sans-serif;
     --mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
   }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html,body{background:var(--bg);color:var(--ink);font-family:var(--body);height:100vh;overflow:hidden}
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--body);min-height:100vh;display:flex;flex-direction:column}
 
-  .palco{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
-    background:radial-gradient(ellipse at top,#1A2238 0%,#0A0E1A 60%);overflow:hidden}
+  header{padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--line);background:var(--surface)}
+  header .back{color:var(--ink-3);text-decoration:none;font-family:var(--mono);font-size:12px}
+  header .back:hover{color:var(--ink)}
+  header h1{margin:0;font-family:var(--display);font-size:16px;letter-spacing:-.01em}
+  header .disc{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ia)}
 
-  /* HUD */
-  .hud{position:fixed;left:0;right:0;bottom:0;padding:16px 20px;z-index:50;
-    background:linear-gradient(to top,rgba(10,14,26,.92),rgba(10,14,26,0));backdrop-filter:blur(4px)}
-  .hud .barra{height:3px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;margin-bottom:12px}
-  .hud .prog{height:100%;background:var(--acc);width:0;transition:width .2s linear}
-  .hud .ctrl{display:flex;gap:10px;align-items:center;justify-content:space-between}
-  .hud button{appearance:none;background:none;border:1px solid var(--line);color:var(--ink);
-    font-family:var(--mono);font-size:12px;letter-spacing:.08em;padding:9px 14px;border-radius:8px;cursor:pointer;
-    display:inline-flex;align-items:center;gap:8px}
-  .hud button:hover{background:var(--surface);border-color:var(--ink-3)}
-  .hud button.primario{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:700}
-  .hud button.primario:hover{filter:brightness(1.08)}
-  .hud .meta{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.1em;text-transform:uppercase}
-  .hud .meta b{color:var(--ink-2);font-weight:600}
+  .palco{flex:1;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at top,#1a2236 0%,#0B0F1C 60%)}
+  .cena{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:4vh 6vw;opacity:0;transition:opacity .5s ease;pointer-events:none}
+  .cena.ativa{opacity:1;pointer-events:auto}
 
-  /* topo */
-  .topo{position:fixed;top:0;left:0;right:0;padding:14px 20px;z-index:50;
-    display:flex;justify-content:space-between;align-items:center;
-    background:linear-gradient(to bottom,rgba(10,14,26,.9),rgba(10,14,26,0))}
-  .topo a{color:var(--ink-3);text-decoration:none;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
-  .topo a:hover{color:var(--ink)}
-  .topo .titulo{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
-  .topo .titulo b{color:var(--ink-2)}
+  .titulao{font-family:var(--display);font-size:clamp(28px,5vw,56px);letter-spacing:-.02em;text-align:center;margin:0 0 12px;line-height:1.1}
+  .sub{color:var(--ink-2);font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;text-align:center;margin:0 0 20px}
+  .fala{max-width:720px;font-size:clamp(17px,2.2vw,22px);line-height:1.5;text-align:center}
+  .fala strong{color:var(--ia)}
 
-  /* cena */
-  .cena{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;
-    padding:60px 24px;text-align:center;opacity:0;transition:opacity .4s}
-  .cena.on{display:flex;opacity:1}
-  .cena h1{font-family:var(--display);font-size:clamp(28px,5vw,52px);letter-spacing:-.02em;line-height:1.08;margin-bottom:18px;max-width:900px}
-  .cena h2{font-family:var(--display);font-size:clamp(22px,3.6vw,36px);letter-spacing:-.01em;line-height:1.12;margin-bottom:14px;max-width:820px}
-  .cena p{font-size:clamp(15px,1.8vw,19px);color:var(--ink-2);max-width:720px;line-height:1.55}
-  .cena .ano{font-family:var(--mono);font-size:clamp(60px,10vw,120px);font-weight:700;color:var(--acc);letter-spacing:-.03em;line-height:1;margin-bottom:8px;text-shadow:0 0 40px rgba(240,180,41,.4)}
-  .cena .selo{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);margin-bottom:10px}
-  .cena strong{color:var(--ink)}
+  .fruta{font-size:clamp(70px,14vw,140px);filter:drop-shadow(0 6px 18px rgba(0,0,0,.5));animation:flutua 3s ease-in-out infinite}
+  @keyframes flutua{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-10px) rotate(2deg)}}
+  .fruta.grande{font-size:clamp(100px,20vw,200px)}
 
-  /* animaçoes reutilizaveis */
-  @keyframes entra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-  @keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
-  @keyframes gira{to{transform:rotate(360deg)}}
-  @keyframes neve{from{transform:translateY(-10vh)}to{transform:translateY(110vh)}}
-  @keyframes risca{from{stroke-dashoffset:300}to{stroke-dashoffset:0}}
-  @keyframes bate{0%,100%{transform:scale(1)}30%{transform:scale(1.2)}60%{transform:scale(.95)}}
-  .cena.on h1,.cena.on h2,.cena.on p,.cena.on .ano,.cena.on .selo{animation:entra .6s both}
-  .cena.on h2{animation-delay:.1s}
-  .cena.on p{animation-delay:.3s}
+  .elenco{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;margin:16px 0}
+  .elenco .quem{display:flex;flex-direction:column;align-items:center;gap:4px}
+  .elenco .quem .emj{font-size:56px}
+  .elenco .quem .nm{font-family:var(--mono);font-size:11px;color:var(--ink-2);letter-spacing:.1em;text-transform:uppercase}
 
-  /* cenas especificas */
-  .ilu{display:flex;align-items:center;justify-content:center;gap:clamp(20px,5vw,60px);margin:20px 0 10px;flex-wrap:wrap}
-  .ilu .emj{font-size:clamp(50px,9vw,96px);filter:drop-shadow(0 6px 18px rgba(0,0,0,.4));animation:pulsa 2.6s infinite}
-  .ilu .seta{font-size:clamp(28px,5vw,48px);color:var(--acc)}
-  .ilu .label{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-top:8px}
+  .tl{width:100%;max-width:820px;display:grid;gap:10px}
+  .tl .ev{display:grid;grid-template-columns:90px 1fr;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px;opacity:.25;transform:translateX(-12px);transition:all .4s ease}
+  .tl .ev.on{opacity:1;transform:translateX(0);border-color:var(--ia)}
+  .tl .ev .ano{font-family:var(--display);font-size:22px;color:var(--ia);letter-spacing:-.01em}
+  .tl .ev .txt{font-size:14px;line-height:1.35;color:var(--ink-2)}
+  .tl .ev.on .txt{color:var(--ink)}
 
-  /* timeline construindo */
-  .timeline{position:relative;width:min(900px,92vw);margin:28px auto 10px;padding:14px 0}
-  .timeline::before{content:"";position:absolute;left:0;right:0;top:50%;height:2px;background:var(--line);transform:translateY(-50%)}
-  .tl-fill{position:absolute;left:0;top:50%;height:2px;background:var(--acc);transform:translateY(-50%);width:0;transition:width 1.4s ease-out}
-  .tl-row{display:flex;justify-content:space-between;position:relative;z-index:2}
-  .tl-pt{text-align:center;opacity:0;transform:translateY(8px);transition:opacity .5s,transform .5s}
-  .tl-pt.on{opacity:1;transform:translateY(0)}
-  .tl-pt .bolinha{width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--acc);margin:0 auto 6px;box-shadow:0 0 0 4px rgba(240,180,41,.15)}
-  .tl-pt .ano{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--acc);display:block}
-  .tl-pt .evt{font-size:11px;color:var(--ink-2);display:block;margin-top:2px;max-width:110px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;width:100%;max-width:820px}
+  @media (max-width:640px){ .grid3{grid-template-columns:1fr} }
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center;opacity:.3;transform:translateY(10px);transition:all .4s ease}
+  .card.on{opacity:1;transform:translateY(0);border-color:var(--ia)}
+  .card .emj{font-size:42px;margin-bottom:6px}
+  .card h3{margin:4px 0;font-family:var(--display);font-size:18px;color:var(--ia)}
+  .card p{margin:0;font-size:13px;color:var(--ink-2);line-height:1.4}
 
-  /* 3 colunas (abordagens ML) */
-  .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;max-width:820px;margin:14px auto 0}
-  .col{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 16px;text-align:left;opacity:0;animation:entra .5s forwards}
-  .col:nth-child(2){animation-delay:.2s} .col:nth-child(3){animation-delay:.4s}
-  .col .n{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--acc);text-transform:uppercase}
-  .col h3{font-family:var(--display);font-size:20px;margin:4px 0 6px}
-  .col p{font-size:14px;color:var(--ink-2);text-align:left}
-
-  /* cartoes de pessoa */
-  .pessoa{display:inline-flex;flex-direction:column;align-items:center;margin:14px 10px 0}
-  .pessoa .cara{width:clamp(90px,14vw,130px);height:clamp(90px,14vw,130px);border-radius:50%;background:linear-gradient(135deg,var(--surface),var(--bg2));
-    display:flex;align-items:center;justify-content:center;font-size:clamp(46px,7vw,64px);border:2px solid var(--acc);
-    box-shadow:0 0 30px rgba(240,180,41,.25)}
-  .pessoa .nome{font-family:var(--mono);font-size:12px;color:var(--ink);margin-top:10px;letter-spacing:.06em}
-  .pessoa .sub{font-family:var(--mono);font-size:10px;color:var(--ink-3);letter-spacing:.08em;text-transform:uppercase}
-
-  /* teste de turing - balao */
-  .balao{display:inline-block;background:var(--surface);border:1px solid var(--line);border-radius:18px 18px 18px 4px;
-    padding:12px 18px;margin:8px;color:var(--ink);font-size:14px;max-width:280px;text-align:left;position:relative;animation:entra .5s both}
-  .balao.robo{border-color:var(--azul);color:var(--ink)}
-  .balao.humano{border-color:var(--acc)}
-  .balao::before{content:attr(data-de);position:absolute;top:-18px;left:4px;font-family:var(--mono);font-size:10px;color:var(--ink-3);letter-spacing:.1em;text-transform:uppercase}
-
-  /* inverno - flocos */
   .inverno{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-  .inverno .floco{position:absolute;top:-10vh;color:#fff;opacity:.6;font-size:14px;animation:neve linear infinite}
-  .cena.inverno-cena{background:linear-gradient(180deg,#1A2545 0%,#0A0E1A 100%)}
-  .cena.inverno-cena h1{color:#D0E4FF}
+  .inverno .fl{position:absolute;top:-20px;color:#A8C8FF;opacity:.8;font-size:24px;animation:cai linear infinite}
+  @keyframes cai{to{transform:translateY(110vh) rotate(360deg)}}
 
-  /* eliza - terminal */
-  .term{background:#0A1020;border:1px solid var(--line);border-radius:10px;padding:16px 18px;max-width:520px;margin:14px auto 0;
-    font-family:var(--mono);font-size:14px;text-align:left;box-shadow:0 10px 40px rgba(0,0,0,.4)}
-  .term .ln{opacity:0;animation:entra .4s forwards}
-  .term .ln.u{color:var(--acc-2)} .term .ln.e{color:var(--azul)}
-  .term .cur{display:inline-block;width:8px;height:14px;background:var(--acc-2);vertical-align:-2px;animation:pulsa 1s infinite}
+  footer{border-top:1px solid var(--line);background:var(--surface);padding:12px 16px}
+  .ctrl{display:flex;align-items:center;gap:14px;max-width:960px;margin:0 auto}
+  .ctrl button{appearance:none;background:var(--surface-2);border:1px solid var(--line);color:var(--ink);font-family:var(--body);font-size:14px;padding:10px 16px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+  .ctrl button:hover{border-color:var(--ia);color:var(--ia)}
+  .ctrl button.primario{background:var(--ia);border-color:var(--ia);color:#0B0F1C;font-weight:600}
+  .ctrl button.primario:hover{opacity:.9;color:#0B0F1C}
+  .ctrl .barra{flex:1;height:6px;background:var(--surface-2);border-radius:99px;overflow:hidden}
+  .ctrl .barra .fill{height:100%;background:var(--ia);width:0%;transition:width .3s ease}
+  .ctrl .status{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.1em;text-transform:uppercase;min-width:80px;text-align:right}
 
-  @media (max-width:600px){
-    .tl-pt .evt{font-size:10px;max-width:60px}
-    .hud button{padding:7px 10px;font-size:11px}
-  }
+  .legenda{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.75);color:#fff;padding:8px 14px;border-radius:8px;font-size:15px;max-width:85%;text-align:center;line-height:1.4;opacity:0;transition:opacity .2s;pointer-events:none}
+  .legenda.on{opacity:1}
+
+  .final{text-align:center}
+  .final .bt{display:inline-block;margin-top:18px;padding:12px 22px;background:var(--ia);color:#0B0F1C;text-decoration:none;border-radius:8px;font-weight:600;border:none;cursor:pointer;font-family:var(--body);font-size:15px}
+  .final .bt:hover{opacity:.9}
+
+  .aviso{position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
+  .aviso .box{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:26px;max-width:420px;text-align:center}
+  .aviso h2{font-family:var(--display);margin:0 0 10px}
+  .aviso p{color:var(--ink-2);margin:6px 0 18px;font-size:14px;line-height:1.5}
+  .aviso button{appearance:none;background:var(--ia);border:0;color:#0B0F1C;font-weight:600;padding:12px 24px;border-radius:8px;cursor:pointer;font-size:15px}
 </style>
 </head>
 <body>
 
-<div class="topo">
-  <a href="../resumos/#ia/01">← voltar</a>
-  <span class="titulo">IA · Aula 01 · <b>Um mergulho no passado</b></span>
-  <span class="titulo" id="relogio">0:00</span>
+<header>
+  <a class="back" href="../resumos/#ia/01">← voltar</a>
+  <h1>Um mergulho no passado</h1>
+  <span class="disc">Introdução à IA · Aula 01</span>
+</header>
+
+<div class="palco" id="palco">
+
+  <!-- CENA 0: Abertura -->
+  <section class="cena ativa" data-fala="Oi, Adrian! Prepara aí que hoje a gente vai voltar no tempo pra entender como a Inteligência Artificial nasceu. Vem comigo.">
+    <div class="fruta grande">🍌</div>
+    <p class="sub">Família Polpa apresenta</p>
+    <h2 class="titulao">Um mergulho no passado</h2>
+    <p class="fala">A história da IA, de 1943 até os <strong>invernos</strong> que quase mataram ela.</p>
+  </section>
+
+  <!-- CENA 1: Elenco -->
+  <section class="cena" data-fala="Quem vai te explicar hoje: o Bento Banana, o Seu Limão e a Dona Manga. Cada um conta uma parte.">
+    <h2 class="titulao">Quem vai contar</h2>
+    <div class="elenco">
+      <div class="quem"><span class="emj">🍌</span><span class="nm">Bento</span></div>
+      <div class="quem"><span class="emj">🍋</span><span class="nm">Seu Limão</span></div>
+      <div class="quem"><span class="emj">🥭</span><span class="nm">Dona Manga</span></div>
+    </div>
+    <p class="fala">E uma pergunta pra ficar na cabeça: <strong>o que é IA, de verdade?</strong></p>
+  </section>
+
+  <!-- CENA 2: Definição -->
+  <section class="cena" data-fala="A definição que o professor Leonam usa é essa: Inteligência Artificial é a simulação dos processos de inteligência humana por uma máquina. É o ser humano querendo ir além da biologia. Decora essa, cai em prova.">
+    <div class="fruta">🍋</div>
+    <p class="sub">A definição oficial</p>
+    <h2 class="titulao" style="font-size:clamp(22px,3vw,34px);max-width:800px">"IA é a simulação de processos de inteligência humana por uma máquina."</h2>
+    <p class="fala">É o desejo humano de <strong>ir além da biologia</strong>. Uma extensão da evolução tecnológica.</p>
+  </section>
+
+  <!-- CENA 3: Linha do tempo -->
+  <section class="cena" data-fala="Agora a linha do tempo. Decora essas datas, caem em prova. 1943: Pitts e McCulloch criam o primeiro modelo matemático de neurônio. 1950: Alan Turing cria o Teste de Turing. 1956: na conferência de Dartmouth, nasce oficialmente o termo Inteligência Artificial. 1959: aparece o termo Machine Learning. 1966: o Weizenbaum cria o ELIZA, o primeiro chatbot da história.">
+    <p class="sub">Linha do tempo</p>
+    <h2 class="titulao" style="font-size:clamp(22px,3vw,30px);margin-bottom:16px">Decora essas datas</h2>
+    <div class="tl">
+      <div class="ev" data-at="2"><span class="ano">1943</span><span class="txt"><strong>Pitts + McCulloch</strong> — primeiro modelo matemático de neurônio</span></div>
+      <div class="ev" data-at="5"><span class="ano">1950</span><span class="txt"><strong>Alan Turing</strong> — cria o Teste de Turing</span></div>
+      <div class="ev" data-at="10"><span class="ano">1956</span><span class="txt">Conferência de <strong>Dartmouth</strong> — nasce o termo "Inteligência Artificial"</span></div>
+      <div class="ev" data-at="16"><span class="ano">1959</span><span class="txt">Surge o termo <strong>Machine Learning</strong></span></div>
+      <div class="ev" data-at="19"><span class="ano">1966</span><span class="txt"><strong>ELIZA</strong> — primeiro chatbot (simulava um psicanalista)</span></div>
+    </div>
+  </section>
+
+  <!-- CENA 4: Invernos -->
+  <section class="cena" data-fala="Aí veio a parte fria da história. Entre 1970 e 1990, a IA passou por dois invernos. As máquinas eram fracas, as promessas eram grandes, e o dinheiro secou. A pesquisa quase morreu. Guarda isso: foram DOIS invernos.">
+    <div class="inverno" id="floco"></div>
+    <div class="fruta grande">🥶</div>
+    <h2 class="titulao">Os Invernos da IA</h2>
+    <p class="fala"><strong>1970–1990</strong>. Dois invernos. Expectativa alta, hardware fraco, o investimento secou.</p>
+  </section>
+
+  <!-- CENA 5: 3 abordagens -->
+  <section class="cena" data-fala="Machine Learning tem três abordagens, e isso também cai em prova. A simbólica funciona com regras lógicas. A conexionista imita o cérebro com redes neurais. A evolutiva se inspira na teoria da evolução, os algoritmos genéticos.">
+    <p class="sub">Machine Learning</p>
+    <h2 class="titulao" style="font-size:clamp(22px,3vw,30px);margin-bottom:16px">As 3 abordagens</h2>
+    <div class="grid3">
+      <div class="card" data-at="3"><div class="emj">📐</div><h3>Simbólica</h3><p>Regras lógicas. Se X, então Y.</p></div>
+      <div class="card" data-at="8"><div class="emj">🧠</div><h3>Conexionista</h3><p>Redes neurais. Imita o cérebro.</p></div>
+      <div class="card" data-at="13"><div class="emj">🧬</div><h3>Evolutiva</h3><p>Baseada em evolução. Algoritmos genéticos.</p></div>
+    </div>
+  </section>
+
+  <!-- CENA 6: Fecha o ciclo -->
+  <section class="cena" data-fala="E em 2014, o primeiro sistema passou no Teste de Turing. Fechou o ciclo que o Alan tinha aberto 64 anos antes. Hoje a IA voltou com tudo, e você vai estudar o renascimento dela na próxima aula.">
+    <div class="fruta grande">🚀</div>
+    <h2 class="titulao">E então, 2014</h2>
+    <p class="fala">Um sistema <strong>passa no Teste de Turing</strong> pela primeira vez. Fechou o ciclo que Alan abriu em 1950.</p>
+  </section>
+
+  <!-- CENA 7: Resumão -->
+  <section class="cena" data-fala="Guarda isso resumido: IA nasceu em 1956 em Dartmouth, mas as fundações vêm de 1943. Passou duas décadas congelada pelos invernos, por prometer demais e entregar pouco. E só decolou de verdade depois.">
+    <p class="sub">Resumo numa frase</p>
+    <h2 class="titulao" style="font-size:clamp(20px,2.6vw,28px);max-width:820px;line-height:1.3">A IA nasceu em <strong style="color:var(--ia)">1956 em Dartmouth</strong>, mas as fundações vêm de <strong style="color:var(--ia)">1943</strong>. Passou duas décadas congelada nos "invernos" por prometer demais e entregar pouco — e só decolou de verdade depois.</p>
+  </section>
+
+  <!-- CENA 8: Final -->
+  <section class="cena final" data-fala="Beleza, Adrian. É isso. Agora clica em concluído aqui embaixo pra marcar essa aula. Até a próxima.">
+    <div class="fruta grande">🎓</div>
+    <h2 class="titulao">Aula concluída</h2>
+    <p class="fala">Clica aí embaixo e segue pra próxima.</p>
+    <button class="bt" id="btnConcluir">✓ Marcar como assistida</button>
+  </section>
+
+  <div class="legenda" id="legenda"></div>
 </div>
 
-<div class="palco" id="palco"></div>
-
-<div class="hud">
-  <div class="barra"><div class="prog" id="prog"></div></div>
+<footer>
   <div class="ctrl">
-    <span class="meta">Cena <b id="nCena">1</b> de <b id="totalCenas">—</b></span>
-    <div style="display:flex;gap:8px">
-      <button id="btnVoltar" type="button" title="Cena anterior">← Anterior</button>
-      <button id="btnPlay" class="primario" type="button">▶ Começar</button>
-      <button id="btnAvancar" type="button" title="Próxima cena">Próximo →</button>
-    </div>
-    <span class="meta" id="voz">voz: carregando</span>
+    <button id="btnPlay" class="primario">▶ Começar</button>
+    <button id="btnVolta" title="Cena anterior">⏮</button>
+    <button id="btnFrente" title="Próxima cena">⏭</button>
+    <div class="barra"><div class="fill" id="fill"></div></div>
+    <span class="status" id="status">0/9</span>
+  </div>
+</footer>
+
+<div class="aviso" id="aviso">
+  <div class="box">
+    <h2>Vídeo-aula com narração</h2>
+    <p>Essa aula usa a voz do seu navegador pra narrar. Clica em começar que já abre com som.</p>
+    <button id="btnComecar">▶ Começar a aula</button>
   </div>
 </div>
 
@@ -152,288 +200,150 @@
 (function(){
 "use strict";
 
-/* cada cena: html + narracao (texto que a voz le) + duracao minima em ms (se voz falhar) */
-var CENAS = [
-  { html: `
-    <span class="selo">Introdução à Inteligência Artificial</span>
-    <h1>Aula 01<br>Um mergulho no passado</h1>
-    <p>Prof. Leonam Nagel · aula de ~4 minutos</p>
-    <div class="ilu" style="margin-top:28px">
-      <span class="emj">🧠</span><span class="seta">→</span><span class="emj">🤖</span>
-    </div>
-  `, voz: "Introdução à Inteligência Artificial. Aula 1: Um mergulho no passado. Professor Leonam Nagel. Nessa aula a gente vai ver como a IA começou, desde o primeiro modelo matemático de neurônio até o inverno que parou tudo nos anos 70.", dur: 14000 },
+var cenas = Array.from(document.querySelectorAll(".cena"));
+var atual = 0;
+var tocando = false;
+var falaAtual = null;
+var vozes = [];
+var vozEscolhida = null;
 
-  { html: `
-    <span class="selo">Primeiro, o que é IA</span>
-    <h2>IA é a simulação de processos de <strong>inteligência humana</strong> por uma máquina.</h2>
-    <p>Ela nasceu do desejo humano de <strong>ir além da biologia</strong>. Pensa como extensão da evolução tecnológica: a gente quis replicar no silício o que o cérebro faz na carne.</p>
-  `, voz: "Antes de mergulhar no passado, uma definição. Inteligência Artificial é a simulação de processos de inteligência humana por uma máquina. Ela nasceu do desejo humano de ir além da biologia.", dur: 11000 },
+var elLegenda = document.getElementById("legenda");
+var elFill = document.getElementById("fill");
+var elStatus = document.getElementById("status");
+var elPlay = document.getElementById("btnPlay");
+var elVolta = document.getElementById("btnVolta");
+var elFrente = document.getElementById("btnFrente");
+var elAviso = document.getElementById("aviso");
+var elComecar = document.getElementById("btnComecar");
+var elConcluir = document.getElementById("btnConcluir");
 
-  { html: `
-    <div class="ano">1943</div>
-    <h2>O primeiro neurônio matemático</h2>
-    <div class="ilu" style="margin:14px 0">
-      <div class="pessoa"><div class="cara">👨‍🔬</div><span class="nome">Walter Pitts</span><span class="sub">matemático</span></div>
-      <div class="pessoa"><div class="cara">👨‍⚕️</div><span class="nome">Warren McCulloch</span><span class="sub">neurologista</span></div>
-    </div>
-    <p>Eles criaram um <strong>modelo matemático</strong> que representava como um neurônio funciona. Parece pouco — mas essa é a base das <strong>redes neurais</strong> que rodam o ChatGPT hoje.</p>
-  `, voz: "A nossa história começa em 1943. Dois pesquisadores, Walter Pitts e Warren McCulloch, criam o primeiro modelo matemático de um neurônio. Parece pouco, mas é a base das redes neurais que você usa hoje no ChatGPT.", dur: 13000 },
-
-  { html: `
-    <h2>Entre 1945 e 1948, duas peças entraram</h2>
-    <div class="ilu" style="margin-top:20px">
-      <div class="pessoa"><div class="cara">💻</div><span class="nome">1945</span><span class="sub">Computador moderno</span></div>
-      <div class="pessoa"><div class="cara">📘</div><span class="nome">1948</span><span class="sub">Cibernética — N. Wiener</span></div>
-    </div>
-    <p>Em <strong>1945</strong> chega o computador moderno — sem hardware, IA não existe. Em <strong>1948</strong>, Norbert Wiener publica <em>Cibernética</em>, o primeiro livro sério sobre máquinas pensantes.</p>
-  `, voz: "Em 1945 chega o computador moderno. Sem hardware, IA não existe. Em 1948, Norbert Wiener publica Cibernética, o primeiro livro sério sobre máquinas pensantes.", dur: 11000 },
-
-  { html: `
-    <div class="ano">1950</div>
-    <h2>Alan Turing e <strong>a pergunta</strong></h2>
-    <div class="ilu" style="margin:6px 0 10px">
-      <div class="pessoa"><div class="cara">🧑‍🎓</div><span class="nome">Alan Turing</span><span class="sub">pai da computação</span></div>
-    </div>
-    <div style="display:flex;justify-content:center;flex-wrap:wrap">
-      <div class="balao humano" data-de="Humano">Você é uma máquina?</div>
-      <div class="balao robo" data-de="?">Não sei do que você fala.</div>
-    </div>
-    <p style="margin-top:14px">O <strong>Teste de Turing</strong>: se, numa conversa escrita, a pessoa não consegue dizer se tá falando com humano ou máquina, a máquina passou. <strong>64 anos depois</strong> alguém finalmente passou — em 2014.</p>
-  `, voz: "1950. Alan Turing, o pai da computação, propõe uma pergunta simples: uma máquina consegue se passar por humano? Nasce o Teste de Turing. Levaria 64 anos pra alguém passar.", dur: 15000 },
-
-  { html: `
-    <div class="ano">1956</div>
-    <h2>A certidão de nascimento da IA</h2>
-    <p><strong>Conferência de Dartmouth.</strong> Um grupo de cientistas se reúne, e nessa conferência cunham oficialmente o termo: <strong>Inteligência Artificial</strong>.</p>
-    <div style="margin-top:20px;padding:16px 24px;border:2px solid var(--acc);border-radius:12px;display:inline-block;background:rgba(240,180,41,.08)">
-      <span style="font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--acc);text-transform:uppercase">Marco oficial</span>
-      <div style="font-family:var(--display);font-size:clamp(22px,3vw,30px);margin-top:4px">“Inteligência Artificial” nasce como campo</div>
-    </div>
-  `, voz: "1956, Dartmouth College. Um grupo de cientistas se reúne e, nessa conferência, cunham oficialmente o termo Inteligência Artificial. É a certidão de nascimento da IA como campo de estudo.", dur: 13000 },
-
-  { html: `
-    <div class="ano">1959</div>
-    <h2>Surge o <strong>Machine Learning</strong></h2>
-    <p>Aprendizado de máquina. A ideia é simples: <strong>dar dados pra máquina</strong> e deixar ela encontrar os padrões sozinha, sem a gente programar regra por regra.</p>
-    <div style="margin-top:20px;font-family:var(--mono);font-size:18px;color:var(--ink-2)">
-      <span style="color:var(--acc)">dados</span> → máquina → <span style="color:var(--acc)">padrão aprendido</span>
-    </div>
-    <p style="margin-top:14px;font-size:14px;color:var(--ink-3)">Dados são o <strong>alimento</strong> da IA.</p>
-  `, voz: "Três anos depois, em 1959, surge outro termo que você vai ouvir muito: Machine Learning, ou aprendizado de máquina. A ideia é dar dados pra máquina e deixar ela encontrar os padrões sozinha.", dur: 12000 },
-
-  { html: `
-    <h2>As <strong>3 abordagens</strong> do Machine Learning</h2>
-    <p style="font-size:14px;color:var(--ink-3);margin-bottom:6px">(decora essa — cai em prova)</p>
-    <div class="cols">
-      <div class="col"><span class="n">01</span><h3>Simbólica</h3><p>Regras lógicas. <em>Se X então Y.</em> Pensamento de advogado.</p></div>
-      <div class="col"><span class="n">02</span><h3>Conexionista</h3><p>Redes neurais. Imita o cérebro humano. É o que roda hoje.</p></div>
-      <div class="col"><span class="n">03</span><h3>Evolutiva</h3><p>Algoritmos genéticos. Simula a evolução biológica — o mais apto sobrevive.</p></div>
-    </div>
-  `, voz: "O machine learning se divide em três escolas de pensamento. Simbólica, usa regras lógicas: se X então Y. Conexionista, imita o cérebro com redes neurais, é o que roda hoje. E evolutiva, baseada na teoria da evolução.", dur: 14000 },
-
-  { html: `
-    <span class="selo">Anos 60</span>
-    <h2>John McCarthy e a <strong>linguagem Lisp</strong></h2>
-    <div class="ilu">
-      <div class="pessoa"><div class="cara">👨‍💻</div><span class="nome">John McCarthy</span><span class="sub">o padrinho da IA</span></div>
-    </div>
-    <p>Ele criou o <strong>Lisp</strong>, a primeira linguagem de programação pensada pra IA. Com ela, finalmente os robôs começaram a <strong>conversar</strong>.</p>
-  `, voz: "Anos 60. John McCarthy, considerado o padrinho da IA, cria a linguagem Lisp. A primeira linguagem pensada pra inteligência artificial. Robôs começam a conversar.", dur: 10000 },
-
-  { html: `
-    <div class="ano">1966</div>
-    <h2>ELIZA — <strong>o primeiro chatbot</strong></h2>
-    <p>Joseph Weizenbaum cria ELIZA, que simulava um <strong>psicanalista</strong>. Era só script pré-programado — mas assustou o mundo.</p>
-    <div class="term">
-      <div class="ln u">&gt; Tô meio triste hoje.</div>
-      <div class="ln e" style="animation-delay:.3s">ELIZA: Por que você tá meio triste hoje?</div>
-      <div class="ln u" style="animation-delay:.9s">&gt; Acho que é por causa do trabalho.</div>
-      <div class="ln e" style="animation-delay:1.5s">ELIZA: Me conta mais sobre o seu trabalho.<span class="cur"></span></div>
-    </div>
-    <p style="margin-top:14px;font-size:14px;color:var(--ink-3)">Muita gente confessava segredos pra ela. Só que por dentro: era um <em>if/else</em>.</p>
-  `, voz: "1966. Joseph Weizenbaum cria ELIZA, o primeiro chatbot da história. Simulava um psicanalista. Era só script pré-programado, mas assustou o mundo. Muita gente confessava segredos pra ela.", dur: 16000 },
-
-  { html: `
-    <span class="selo">Décadas de 1960 e 70</span>
-    <h2>Robôs humanoides e o termo <strong>“ciborgue”</strong></h2>
-    <div class="ilu">
-      <div class="pessoa"><div class="cara">🤖</div><span class="nome">Wabot-1</span><span class="sub">1973 · Japão</span></div>
-      <div class="pessoa"><div class="cara">🎹</div><span class="nome">Wabot-2</span><span class="sub">1980 · tocava piano</span></div>
-    </div>
-    <p>O Japão cria os <strong>Wabot-1 e Wabot-2</strong>, os primeiros robôs humanoides capazes de fazer tarefas. Nessa época surge o termo <strong>ciborgue</strong>.</p>
-  `, voz: "Nos anos 60 e 70, o Japão cria os Wabot-1 e Wabot-2, os primeiros robôs humanoides. O Wabot-2 chegou a tocar piano. Nasce o termo ciborgue.", dur: 11000 },
-
-  { html: `
-    <div class="inverno" id="floco-pai"></div>
-    <div class="ano" style="color:#D0E4FF;text-shadow:0 0 40px rgba(208,228,255,.5)">❄️</div>
-    <h1 style="color:#D0E4FF">O Inverno da IA</h1>
-    <p style="color:#B8CBE8">Entre o <strong>final dos anos 60</strong> e o <strong>início dos 90</strong>, duas vezes a IA ficou congelada. Os computadores eram fracos demais, as promessas eram grandes demais. O dinheiro secou.</p>
-    <div style="display:flex;gap:30px;margin-top:20px;flex-wrap:wrap;justify-content:center">
-      <div><div style="font-family:var(--mono);font-size:24px;color:#D0E4FF">1º inverno</div><div style="color:#B8CBE8;font-size:13px">fim dos 60 / início dos 70</div></div>
-      <div><div style="font-family:var(--mono);font-size:24px;color:#D0E4FF">2º inverno</div><div style="color:#B8CBE8;font-size:13px">anos 80 / início dos 90</div></div>
-    </div>
-  `, voz: "E então veio o inverno. Duas vezes. No final dos anos 60 e nos anos 80, o dinheiro secou. Os computadores eram fracos demais, as promessas eram grandes demais. A IA ficou congelada por quase vinte anos.", classe:"inverno-cena", dur: 15000 },
-
-  { html: `
-    <span class="selo">Recapitulando</span>
-    <h2>A linha do tempo que você acabou de ver</h2>
-    <div class="timeline">
-      <div class="tl-fill" id="tlFill"></div>
-      <div class="tl-row">
-        <div class="tl-pt" data-d="100"><div class="bolinha"></div><span class="ano">1943</span><span class="evt">Neurônio matemático</span></div>
-        <div class="tl-pt" data-d="300"><div class="bolinha"></div><span class="ano">1950</span><span class="evt">Teste de Turing</span></div>
-        <div class="tl-pt" data-d="600"><div class="bolinha"></div><span class="ano">1956</span><span class="evt">Nasce "IA"</span></div>
-        <div class="tl-pt" data-d="900"><div class="bolinha"></div><span class="ano">1959</span><span class="evt">Machine Learning</span></div>
-        <div class="tl-pt" data-d="1200"><div class="bolinha"></div><span class="ano">1966</span><span class="evt">ELIZA</span></div>
-        <div class="tl-pt" data-d="1500"><div class="bolinha"></div><span class="ano">70-90</span><span class="evt">Invernos</span></div>
-      </div>
-    </div>
-    <p style="margin-top:22px">A IA nasceu em <strong>1956</strong> (Dartmouth), mas as fundações vêm de <strong>1943</strong>. Passou décadas congeladas por prometer demais — e só decolou depois.</p>
-  `, voz: "Recapitulando. A IA nasceu em 1956 em Dartmouth, mas as fundações vêm de 1943 com Pitts e McCulloch. Passou décadas congeladas por prometer demais e só decolou de verdade depois.", dur: 14000, aposMontar: function(el){
-    setTimeout(function(){ var f = el.querySelector("#tlFill"); if (f) f.style.width = "100%"; }, 50);
-    el.querySelectorAll(".tl-pt").forEach(function(pt){
-      setTimeout(function(){ pt.classList.add("on"); }, +pt.dataset.d);
-    });
-  } },
-
-  { html: `
-    <span class="selo">Próxima aula</span>
-    <h1>O <strong>Renascimento</strong> da IA</h1>
-    <p>Como a IA saiu do inverno e virou o que você usa hoje.</p>
-    <div style="margin-top:34px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-      <a href="../resumos/#ia/01" style="text-decoration:none">
-        <span style="display:inline-block;padding:12px 20px;border:1px solid var(--line);border-radius:10px;color:var(--ink-2);font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase">Ver resumo em texto</span>
-      </a>
-      <a href="../" style="text-decoration:none">
-        <span style="display:inline-block;padding:12px 20px;background:var(--acc);border-radius:10px;color:var(--bg);font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:700">Voltar à rotina</span>
-      </a>
-    </div>
-  `, voz: "Fim da aula 1. Na próxima aula a gente vê o Renascimento da IA: como ela saiu do inverno e virou o que você usa hoje. Até lá.", dur: 9000 }
-];
-
-var palco = document.getElementById("palco");
-var i = 0, tocando = false, timer = null, inicio = 0, acumulado = 0;
-var synth = window.speechSynthesis, uter = null, vozPtBr = null;
+/* floco de neve na cena 4 */
+(function floco(){
+  var box = document.getElementById("floco");
+  var sim = ["❄","❅","❆","·","•"];
+  for (var i=0;i<30;i++){
+    var f = document.createElement("span");
+    f.className = "fl";
+    f.textContent = sim[i%sim.length];
+    f.style.left = Math.random()*100 + "%";
+    f.style.animationDuration = (4 + Math.random()*4) + "s";
+    f.style.animationDelay = (Math.random()*4) + "s";
+    f.style.fontSize = (14 + Math.random()*18) + "px";
+    box.appendChild(f);
+  }
+})();
 
 function escolherVoz(){
-  var vs = synth.getVoices();
-  vozPtBr = vs.find(function(v){ return /pt.?BR/i.test(v.lang); })
-         || vs.find(function(v){ return /^pt/i.test(v.lang); })
-         || vs[0];
-  document.getElementById("voz").textContent = "voz: " + (vozPtBr ? vozPtBr.name.substring(0,22) : "indisponível");
+  vozes = speechSynthesis.getVoices();
+  var brs = vozes.filter(function(v){ return /pt(-|_)BR/i.test(v.lang) || /portuguese.*braz/i.test(v.name); });
+  if (brs.length === 0) brs = vozes.filter(function(v){ return /^pt/i.test(v.lang); });
+  var prefer = brs.find(function(v){ return /Francisca|Antonio|Thalita|Maria/i.test(v.name); });
+  vozEscolhida = prefer || brs[0] || vozes[0];
 }
-if (synth){
-  escolherVoz();
-  synth.onvoiceschanged = escolherVoz;
+if (speechSynthesis.getVoices().length) escolherVoz();
+speechSynthesis.onvoiceschanged = escolherVoz;
+
+function falar(txt, aoFim){
+  speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(txt);
+  if (vozEscolhida) u.voice = vozEscolhida;
+  u.lang = "pt-BR";
+  u.rate = 1.05;
+  u.pitch = 1.0;
+  u.onend = function(){ falaAtual = null; if (aoFim) aoFim(); };
+  u.onerror = function(){ falaAtual = null; if (aoFim) aoFim(); };
+  falaAtual = u;
+  speechSynthesis.speak(u);
 }
 
-function montar(n){
-  i = Math.max(0, Math.min(CENAS.length - 1, n));
-  palco.innerHTML = "";
-  var cena = CENAS[i];
-  var d = document.createElement("div");
-  d.className = "cena" + (cena.classe ? " " + cena.classe : "");
-  d.innerHTML = cena.html;
-  palco.appendChild(d);
-  requestAnimationFrame(function(){ d.classList.add("on"); });
-  if (cena.classe === "inverno-cena"){ gerarNeve(d); }
-  if (cena.aposMontar) cena.aposMontar(d);
-  document.getElementById("nCena").textContent = i + 1;
-  document.getElementById("totalCenas").textContent = CENAS.length;
-  atualizarProg(0);
-}
-
-function gerarNeve(el){
-  var pai = el.querySelector("#floco-pai"); if (!pai) return;
-  var simbolos = ["❄","✦","·"];
-  for (var k = 0; k < 40; k++){
-    var f = document.createElement("span");
-    f.className = "floco"; f.textContent = simbolos[k % 3];
-    f.style.left = Math.random() * 100 + "vw";
-    f.style.fontSize = (8 + Math.random() * 14) + "px";
-    f.style.animationDuration = (5 + Math.random() * 7) + "s";
-    f.style.animationDelay = (-Math.random() * 7) + "s";
-    f.style.opacity = (.3 + Math.random() * .5);
-    pai.appendChild(f);
-  }
-}
-
-function narrar(cena, aoAcabar){
-  if (!synth){ setTimeout(aoAcabar, cena.dur); return null; }
-  try { synth.cancel(); } catch(e){}
-  uter = new SpeechSynthesisUtterance(cena.voz);
-  if (vozPtBr) uter.voice = vozPtBr;
-  uter.lang = "pt-BR"; uter.rate = 1.05; uter.pitch = 1;
-  uter.onend = function(){ aoAcabar(); };
-  uter.onerror = function(){ setTimeout(aoAcabar, Math.max(1000, cena.dur - 2000)); };
-  var fallback = setTimeout(aoAcabar, cena.dur + 4000);
-  var original = aoAcabar;
-  aoAcabar = function(){ clearTimeout(fallback); original(); };
-  uter.onend = aoAcabar;
-  synth.speak(uter);
-  return uter;
-}
-
-function atualizarProg(pct){
-  document.getElementById("prog").style.width = (((i + pct) / CENAS.length) * 100) + "%";
-  var totalMs = CENAS.reduce(function(a, c){ return a + c.dur; }, 0);
-  var passadoMs = 0;
-  for (var k = 0; k < i; k++) passadoMs += CENAS[k].dur;
-  passadoMs += CENAS[i].dur * pct;
-  var s = Math.floor(passadoMs / 1000);
-  document.getElementById("relogio").textContent = Math.floor(s / 60) + ":" + String(s % 60).padStart(2,"0");
-}
-
-function tocarCenaAtual(){
-  var cena = CENAS[i];
-  inicio = Date.now(); acumulado = 0;
-  var dur = cena.dur;
-  function tick(){
-    if (!tocando) return;
-    var p = Math.min(1, (Date.now() - inicio + acumulado) / dur);
-    atualizarProg(p);
-    if (p < 1) timer = requestAnimationFrame(tick);
-  }
-  tick();
-  narrar(cena, function(){
-    if (!tocando) return;
-    if (i < CENAS.length - 1){ i++; montar(i); tocarCenaAtual(); }
-    else { pausar(); document.getElementById("btnPlay").textContent = "↻ Rever"; }
+function animarCena(idx){
+  var c = cenas[idx];
+  var evs = c.querySelectorAll(".tl .ev, .grid3 .card");
+  evs.forEach(function(el){ el.classList.remove("on"); });
+  evs.forEach(function(el){
+    var at = parseFloat(el.dataset.at || "0") * 1000;
+    setTimeout(function(){ el.classList.add("on"); }, at);
   });
 }
 
-function tocar(){
-  if (tocando) return;
-  tocando = true;
-  document.getElementById("btnPlay").textContent = "⏸ Pausar";
-  if (synth) { try { synth.resume(); } catch(e){} }
-  tocarCenaAtual();
-}
-function pausar(){
-  tocando = false;
-  document.getElementById("btnPlay").textContent = "▶ Continuar";
-  cancelAnimationFrame(timer);
-  if (synth) { try { synth.pause(); } catch(e){} }
+function mostrar(idx, falarAgora){
+  if (idx < 0) idx = 0;
+  if (idx >= cenas.length) idx = cenas.length - 1;
+  cenas[atual].classList.remove("ativa");
+  atual = idx;
+  cenas[atual].classList.add("ativa");
+  elFill.style.width = ((atual+1)/cenas.length*100) + "%";
+  elStatus.textContent = (atual+1) + "/" + cenas.length;
+  animarCena(atual);
+  var fala = cenas[atual].dataset.fala || "";
+  elLegenda.textContent = fala;
+  elLegenda.classList.toggle("on", !!fala && tocando);
+  if (falarAgora && fala && tocando){
+    falar(fala, function(){
+      if (tocando && atual < cenas.length - 1){
+        setTimeout(function(){ mostrar(atual + 1, true); }, 400);
+      } else if (atual === cenas.length - 1){
+        tocando = false;
+        elPlay.innerHTML = "▶ Começar de novo";
+      }
+    });
+  }
 }
 
-document.getElementById("btnPlay").addEventListener("click", function(){
-  if (i === CENAS.length - 1 && !tocando){ i = 0; montar(0); tocar(); return; }
-  if (tocando) pausar(); else tocar();
+elPlay.addEventListener("click", function(){
+  if (tocando){
+    speechSynthesis.cancel();
+    tocando = false;
+    elPlay.innerHTML = "▶ Continuar";
+    elLegenda.classList.remove("on");
+    return;
+  }
+  if (atual === cenas.length - 1){ mostrar(0, true); }
+  else { mostrar(atual, true); }
+  tocando = true;
+  elPlay.innerHTML = "⏸ Pausar";
 });
-document.getElementById("btnAvancar").addEventListener("click", function(){
-  if (i < CENAS.length - 1){ i++; montar(i); if (tocando){ synth && synth.cancel(); tocarCenaAtual(); } }
+
+elVolta.addEventListener("click", function(){
+  var estava = tocando; speechSynthesis.cancel();
+  tocando = false; elPlay.innerHTML = "▶ Continuar";
+  mostrar(atual - 1, false);
+  if (estava){ tocando = true; elPlay.innerHTML = "⏸ Pausar"; mostrar(atual, true); }
 });
-document.getElementById("btnVoltar").addEventListener("click", function(){
-  if (i > 0){ i--; montar(i); if (tocando){ synth && synth.cancel(); tocarCenaAtual(); } }
+elFrente.addEventListener("click", function(){
+  var estava = tocando; speechSynthesis.cancel();
+  tocando = false; elPlay.innerHTML = "▶ Continuar";
+  mostrar(atual + 1, false);
+  if (estava){ tocando = true; elPlay.innerHTML = "⏸ Pausar"; mostrar(atual, true); }
+});
+
+elComecar.addEventListener("click", function(){
+  elAviso.style.display = "none";
+  tocando = true; elPlay.innerHTML = "⏸ Pausar";
+  mostrar(0, true);
+});
+
+elConcluir.addEventListener("click", function(){
+  try {
+    var k = "resumos-adrian-v1";
+    var atuais = JSON.parse(localStorage.getItem(k) || "{}");
+    atuais["ia-01"] = new Date().toISOString();
+    localStorage.setItem(k, JSON.stringify(atuais));
+    elConcluir.textContent = "✓ Marcada! Voltando pros resumos...";
+    setTimeout(function(){ location.href = "../resumos/#ia/01"; }, 900);
+  } catch(e){
+    elConcluir.textContent = "Marcada (mas não salvou). Volta pra lista.";
+  }
 });
 
 document.addEventListener("keydown", function(e){
-  if (e.code === "Space"){ e.preventDefault(); document.getElementById("btnPlay").click(); }
-  else if (e.code === "ArrowRight"){ document.getElementById("btnAvancar").click(); }
-  else if (e.code === "ArrowLeft"){ document.getElementById("btnVoltar").click(); }
+  if (e.key === " "){ e.preventDefault(); elPlay.click(); }
+  if (e.key === "ArrowRight"){ elFrente.click(); }
+  if (e.key === "ArrowLeft"){ elVolta.click(); }
 });
 
-montar(0);
+window.addEventListener("beforeunload", function(){ speechSynthesis.cancel(); });
+
 })();
 </script>
 </body>
