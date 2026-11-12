@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resumos do Adrian</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23101522'/%3E%3Cpath d='M9 10h14M9 16h14M9 22h8' stroke='%23F0B429' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#101522; --surface:#171E30; --surface-2:#1E2739; --line:#2A3449;
+    --ink:#E9ECF5; --ink-2:#A8B2C8; --ink-3:#6F7C96;
+    --ia:#F0B429; --arq:#6EA4FF; --pln:#D56CFF; --intro:#3DD6C4;
+    --display:Candara,Optima,"Segoe UI",system-ui,sans-serif;
+    --body:"Segoe UI",system-ui,-apple-system,sans-serif;
+    --mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
+    --r:12px;
+    --acc:var(--ia);
+  }
+  @media (prefers-color-scheme:light){
+    :root{ --bg:#F2F3F7; --surface:#FFFFFF; --surface-2:#F7F8FC; --line:#DDE1EC;
+           --ink:#171E30; --ink-2:#4C5770; --ink-3:#8C96AC;
+           --ia:#B57C00; --arq:#1D5BC7; --pln:#8A2BC0; --intro:#128A7B; }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+  a{color:var(--acc)}
+
+  .wrap{display:grid;grid-template-columns:260px 1fr;gap:0;min-height:100vh}
+  @media (max-width:800px){ .wrap{grid-template-columns:1fr} }
+
+  aside{background:var(--surface);border-right:1px solid var(--line);padding:22px 18px;position:sticky;top:0;align-self:start;max-height:100vh;overflow:auto}
+  aside h1{font-family:var(--display);font-size:20px;margin:0 0 2px;letter-spacing:-.01em}
+  aside .sub{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px}
+  aside .voltar{display:inline-block;font-family:var(--mono);font-size:11px;color:var(--ink-3);text-decoration:none;margin-bottom:16px}
+  aside .voltar:hover{color:var(--ink)}
+  .disc{margin-top:16px}
+  .disc .nome{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:4px}
+  .disc .nome::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--cor)}
+  .disc ul{list-style:none;margin:0 0 0 2px;padding:0 0 0 14px;border-left:1px solid var(--line)}
+  .disc li{margin:0}
+  .disc a{display:block;padding:6px 10px;border-radius:7px;color:var(--ink-2);text-decoration:none;font-size:14px;line-height:1.3;position:relative}
+  .disc a:hover{background:var(--surface-2);color:var(--ink)}
+  .disc a.ativa{background:var(--cor);color:var(--bg);font-weight:600}
+  .disc a .pequena{display:block;font-family:var(--mono);font-size:10px;color:var(--ink-3);margin-top:1px}
+  .disc a.ativa .pequena{color:var(--bg);opacity:.75}
+  .disc a .pend{position:absolute;right:8px;top:7px;width:7px;height:7px;border:1.5px solid var(--ink-3);border-radius:50%}
+  .disc a.feita .pend{background:var(--cor);border-color:var(--cor)}
+  .disc a.ativa .pend{border-color:var(--bg)}
+  .disc a.ativa.feita .pend{background:var(--bg)}
+
+  main{padding:36px clamp(16px,4vw,56px) 60px;max-width:860px;width:100%;margin:0 auto}
+  .topo{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin:0}
+  .marcar{appearance:none;background:none;border:1px solid var(--line);color:var(--ink-2);font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:7px 12px;border-radius:7px;cursor:pointer}
+  .marcar:hover{color:var(--ink);border-color:var(--ink-3)}
+  .marcar.feita{background:var(--acc);color:var(--bg);border-color:var(--acc)}
+
+  #vazio{color:var(--ink-2);padding:40px 0}
+  #vazio h2{font-family:var(--display);font-size:24px;margin:0 0 10px}
+
+  /* markdown renderizado */
+  article h1{font-family:var(--display);font-size:clamp(26px,3.6vw,34px);letter-spacing:-.02em;margin:6px 0 2px;line-height:1.15}
+  article h2{font-family:var(--display);font-size:20px;margin:26px 0 8px;letter-spacing:-.01em;border-bottom:1px solid var(--line);padding-bottom:6px}
+  article h3{font-family:var(--display);font-size:17px;margin:18px 0 4px;color:var(--acc)}
+  article p{margin:8px 0}
+  article strong{color:var(--ink)}
+  article em{color:var(--ink-2)}
+  article code{font-family:var(--mono);font-size:13px;background:var(--surface-2);padding:1px 6px;border-radius:5px}
+  article blockquote{border-left:3px solid var(--acc);background:var(--surface-2);margin:12px 0;padding:10px 14px;border-radius:0 8px 8px 0;color:var(--ink)}
+  article ul,article ol{margin:6px 0 10px;padding-left:22px}
+  article li{margin:3px 0}
+  article hr{border:0;border-top:1px solid var(--line);margin:24px 0}
+  article table{border-collapse:collapse;margin:12px 0;width:100%;font-size:14px}
+  article th,article td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+  article th{background:var(--surface-2);font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+  article tbody tr:nth-child(odd){background:var(--surface)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<aside>
+  <a class="voltar" href="../">← rotina</a>
+  <h1>Resumos</h1>
+  <p class="sub">tecnólogo em ADS</p>
+  <nav id="menu"></nav>
+</aside>
+
+<main>
+  <div id="vazio">
+    <h2>Escolha uma aula no menu</h2>
+    <p>Cada resumo tem a definição que o professor usa, uma linha do tempo e os pontos que caem em prova. Marque como feito quando terminar — fica salvo neste navegador.</p>
+  </div>
+  <div class="topo" hidden id="topo">
+    <p class="eyebrow" id="caminho">—</p>
+    <button class="marcar" id="btnMarcar" type="button">Marcar como lido</button>
+  </div>
+  <article id="artigo" hidden></article>
+</main>
+
+</div>
+<script>
+(function(){
+"use strict";
+
+var DISC = {
+  ia:   {nome:"Introdução à IA", cor:"ia",
+         aulas:[
+           {n:"01", t:"Um mergulho no passado", sub:"História da IA — 1943 até os invernos"},
+           {n:"02", t:"O Renascimento da IA", sub:"(em breve)"},
+           {n:"03", t:"Aula 03", sub:"(em breve)"},
+           {n:"04", t:"Aula 04", sub:"(em breve)"},
+           {n:"05", t:"Aula 05", sub:"(em breve)"},
+           {n:"06", t:"Aula 06", sub:"(em breve)"},
+           {n:"07", t:"Aula 07", sub:"(em breve)"},
+           {n:"08", t:"Aula 08", sub:"(em breve)"}
+         ]},
+  arq:  {nome:"Arquitetura de Computadores", cor:"arq",
+         aulas:[1,2,3,4,5,6,7,8].map(function(n){var p=String(n).padStart(2,"0"); return {n:p, t:"Aula "+p, sub:"(em breve)"};})},
+  pln:  {nome:"PLN e IA", cor:"pln",
+         aulas:[{n:"01", t:"Live 01 gravada", sub:"(em breve)"},
+                {n:"02", t:"Live 02 gravada", sub:"(em breve)"},
+                {n:"03", t:"Live 03 gravada", sub:"(em breve)"}]},
+  intro:{nome:"Introdução ao Curso", cor:"intro",
+         aulas:[{n:"trilha", t:"Trilha de Aprendizagem", sub:"(em breve)"}]}
+};
+
+var CHAVE = "resumos-adrian-v1";
+var feitos;
+try { feitos = JSON.parse(localStorage.getItem(CHAVE)) || {}; } catch(e){ feitos = {}; }
+function salvar(){ try { localStorage.setItem(CHAVE, JSON.stringify(feitos)); } catch(e){} }
+function id(d, a){ return d + "-" + a; }
+
+function montarMenu(){
+  var menu = document.getElementById("menu");
+  menu.innerHTML = "";
+  Object.keys(DISC).forEach(function(d){
+    var dado = DISC[d];
+    var sec = document.createElement("div"); sec.className = "disc";
+    sec.style.setProperty("--cor", "var(--"+dado.cor+")");
+    var h = document.createElement("div"); h.className = "nome"; h.textContent = dado.nome;
+    var ul = document.createElement("ul"); sec.appendChild(h); sec.appendChild(ul);
+    dado.aulas.forEach(function(a){
+      var li = document.createElement("li");
+      var ln = document.createElement("a");
+      ln.href = "#" + d + "/" + a.n;
+      ln.dataset.d = d; ln.dataset.a = a.n;
+      if (feitos[id(d, a.n)]) ln.className = "feita";
+      var nome = document.createElement("span"); nome.textContent = a.t;
+      var sub = document.createElement("span"); sub.className = "pequena"; sub.textContent = a.sub;
+      var pend = document.createElement("span"); pend.className = "pend";
+      ln.appendChild(nome); ln.appendChild(sub); ln.appendChild(pend);
+      li.appendChild(ln); ul.appendChild(li);
+    });
+    menu.appendChild(sec);
+  });
+}
+
+/* conversor markdown muito enxuto - cobre o que a gente escreve nos resumos */
+function md(src){
+  src = src.replace(/\r\n/g, "\n");
+  var out = [], linhas = src.split("\n"), i = 0, emTabela = false, cabeca = null;
+  function esc(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function inline(s){
+    s = esc(s);
+    s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+    s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    s = s.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    return s;
+  }
+  function fecharTabela(){ if (emTabela){ out.push("</tbody></table>"); emTabela = false; cabeca = null; } }
+  while (i < linhas.length){
+    var L = linhas[i];
+    if (/^\s*$/.test(L)){ fecharTabela(); i++; continue; }
+    if (/^#{1,6}\s/.test(L)){
+      fecharTabela();
+      var m = L.match(/^(#{1,6})\s+(.*)$/);
+      out.push("<h"+m[1].length+">"+inline(m[2])+"</h"+m[1].length+">");
+      i++; continue;
+    }
+    if (/^---+\s*$/.test(L)){ fecharTabela(); out.push("<hr>"); i++; continue; }
+    if (/^>\s?/.test(L)){
+      fecharTabela();
+      var bq = [];
+      while (i < linhas.length && /^>\s?/.test(linhas[i])){ bq.push(linhas[i].replace(/^>\s?/, "")); i++; }
+      out.push("<blockquote>"+inline(bq.join(" "))+"</blockquote>");
+      continue;
+    }
+    if (/^\s*[-*]\s+/.test(L)){
+      fecharTabela();
+      out.push("<ul>");
+      while (i < linhas.length && /^\s*[-*]\s+/.test(linhas[i])){
+        out.push("<li>"+inline(linhas[i].replace(/^\s*[-*]\s+/, ""))+"</li>"); i++;
+      }
+      out.push("</ul>"); continue;
+    }
+    if (/^\s*\d+\.\s+/.test(L)){
+      fecharTabela();
+      out.push("<ol>");
+      while (i < linhas.length && /^\s*\d+\.\s+/.test(linhas[i])){
+        out.push("<li>"+inline(linhas[i].replace(/^\s*\d+\.\s+/, ""))+"</li>"); i++;
+      }
+      out.push("</ol>"); continue;
+    }
+    if (/\|/.test(L) && linhas[i+1] && /^\s*\|?\s*:?-+/.test(linhas[i+1])){
+      fecharTabela();
+      cabeca = L.split("|").map(function(x){return x.trim();}).filter(function(x,j,a){return !(j===0&&x==="")&&!(j===a.length-1&&x==="");});
+      out.push("<table><thead><tr>");
+      cabeca.forEach(function(c){ out.push("<th>"+inline(c)+"</th>"); });
+      out.push("</tr></thead><tbody>");
+      emTabela = true; i += 2; continue;
+    }
+    if (emTabela && /\|/.test(L)){
+      var cel = L.split("|").map(function(x){return x.trim();}).filter(function(x,j,a){return !(j===0&&x==="")&&!(j===a.length-1&&x==="");});
+      out.push("<tr>"); cel.forEach(function(c){ out.push("<td>"+inline(c)+"</td>"); }); out.push("</tr>");
+      i++; continue;
+    }
+    fecharTabela();
+    out.push("<p>"+inline(L)+"</p>"); i++;
+  }
+  fecharTabela();
+  return out.join("\n");
+}
+
+function pintarAtiva(d, a){
+  var atv = document.querySelector(".disc a.ativa");
+  if (atv) atv.classList.remove("ativa");
+  var nova = document.querySelector('.disc a[data-d="'+d+'"][data-a="'+a+'"]');
+  if (nova) nova.classList.add("ativa");
+  if (d) document.documentElement.style.setProperty("--acc", "var(--"+DISC[d].cor+")");
+}
+
+async function abrir(d, a){
+  if (!DISC[d] || !DISC[d].aulas.some(function(x){return x.n===a;})) { mostrarVazio(); return; }
+  pintarAtiva(d, a);
+  var aula = DISC[d].aulas.find(function(x){return x.n===a;});
+  document.getElementById("vazio").hidden = true;
+  document.getElementById("topo").hidden = false;
+  document.getElementById("caminho").textContent = DISC[d].nome + " · Aula " + a;
+  var btn = document.getElementById("btnMarcar");
+  var k = id(d, a);
+  function refletir(){
+    btn.classList.toggle("feita", !!feitos[k]);
+    btn.textContent = feitos[k] ? "✓ marcado como lido" : "Marcar como lido";
+  }
+  refletir();
+  btn.onclick = function(){
+    if (feitos[k]) delete feitos[k]; else feitos[k] = new Date().toISOString();
+    salvar(); refletir();
+    var ln = document.querySelector('.disc a[data-d="'+d+'"][data-a="'+a+'"]');
+    if (ln) ln.classList.toggle("feita", !!feitos[k]);
+  };
+  var art = document.getElementById("artigo");
+  art.hidden = false;
+  art.innerHTML = '<p style="color:var(--ink-3)">carregando…</p>';
+  try {
+    var r = await fetch(d + "-" + a + ".md", {cache: "no-cache"});
+    if (!r.ok) throw new Error("http "+r.status);
+    var txt = await r.text();
+    art.innerHTML = md(txt);
+  } catch(e){
+    art.innerHTML = '<h2>Resumo ainda não está pronto</h2><p>Essa aula vai sair em breve. Me chama que eu puxo o slide e escrevo.</p>';
+  }
+}
+
+function mostrarVazio(){
+  document.getElementById("vazio").hidden = false;
+  document.getElementById("topo").hidden = true;
+  document.getElementById("artigo").hidden = true;
+}
+
+function doHash(){
+  var h = location.hash.replace(/^#/, "");
+  if (!h){ mostrarVazio(); return; }
+  var parts = h.split("/");
+  if (parts.length === 2) abrir(parts[0], parts[1]);
+  else mostrarVazio();
+}
+
+window.addEventListener("hashchange", doHash);
+montarMenu();
+doHash();
+})();
+</script>
+</body>
+</html>
