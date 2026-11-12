@@ -203,9 +203,12 @@
 var cenas = Array.from(document.querySelectorAll(".cena"));
 var atual = 0;
 var tocando = false;
-var falaAtual = null;
-var vozes = [];
-var vozEscolhida = null;
+var audios = cenas.map(function(_, i){
+  var a = new Audio("audio/ia-01/" + String(i).padStart(2,"0") + ".mp3");
+  a.preload = "auto";
+  return a;
+});
+var audioAtual = null;
 
 var elLegenda = document.getElementById("legenda");
 var elFill = document.getElementById("fill");
@@ -233,27 +236,17 @@ var elConcluir = document.getElementById("btnConcluir");
   }
 })();
 
-function escolherVoz(){
-  vozes = speechSynthesis.getVoices();
-  var brs = vozes.filter(function(v){ return /pt(-|_)BR/i.test(v.lang) || /portuguese.*braz/i.test(v.name); });
-  if (brs.length === 0) brs = vozes.filter(function(v){ return /^pt/i.test(v.lang); });
-  var prefer = brs.find(function(v){ return /Francisca|Antonio|Thalita|Maria/i.test(v.name); });
-  vozEscolhida = prefer || brs[0] || vozes[0];
+function pararAudio(){
+  if (audioAtual){ try { audioAtual.pause(); audioAtual.currentTime = 0; } catch(e){} audioAtual = null; }
 }
-if (speechSynthesis.getVoices().length) escolherVoz();
-speechSynthesis.onvoiceschanged = escolherVoz;
-
-function falar(txt, aoFim){
-  speechSynthesis.cancel();
-  var u = new SpeechSynthesisUtterance(txt);
-  if (vozEscolhida) u.voice = vozEscolhida;
-  u.lang = "pt-BR";
-  u.rate = 1.05;
-  u.pitch = 1.0;
-  u.onend = function(){ falaAtual = null; if (aoFim) aoFim(); };
-  u.onerror = function(){ falaAtual = null; if (aoFim) aoFim(); };
-  falaAtual = u;
-  speechSynthesis.speak(u);
+function falar(idx, aoFim){
+  pararAudio();
+  var a = audios[idx];
+  audioAtual = a;
+  a.onended = function(){ audioAtual = null; if (aoFim) aoFim(); };
+  a.onerror = function(){ audioAtual = null; if (aoFim) aoFim(); };
+  var p = a.play();
+  if (p && p.catch) p.catch(function(){ if (aoFim) aoFim(); });
 }
 
 function animarCena(idx){
@@ -278,10 +271,10 @@ function mostrar(idx, falarAgora){
   var fala = cenas[atual].dataset.fala || "";
   elLegenda.textContent = fala;
   elLegenda.classList.toggle("on", !!fala && tocando);
-  if (falarAgora && fala && tocando){
-    falar(fala, function(){
+  if (falarAgora && tocando){
+    falar(atual, function(){
       if (tocando && atual < cenas.length - 1){
-        setTimeout(function(){ mostrar(atual + 1, true); }, 400);
+        setTimeout(function(){ mostrar(atual + 1, true); }, 300);
       } else if (atual === cenas.length - 1){
         tocando = false;
         elPlay.innerHTML = "▶ Começar de novo";
@@ -292,26 +285,25 @@ function mostrar(idx, falarAgora){
 
 elPlay.addEventListener("click", function(){
   if (tocando){
-    speechSynthesis.cancel();
+    if (audioAtual) audioAtual.pause();
     tocando = false;
     elPlay.innerHTML = "▶ Continuar";
-    elLegenda.classList.remove("on");
     return;
   }
-  if (atual === cenas.length - 1){ mostrar(0, true); }
+  if (atual === cenas.length - 1 && !audioAtual){ tocando = true; elPlay.innerHTML = "⏸ Pausar"; mostrar(0, true); return; }
+  tocando = true; elPlay.innerHTML = "⏸ Pausar";
+  if (audioAtual && audioAtual.currentTime > 0){ audioAtual.play(); }
   else { mostrar(atual, true); }
-  tocando = true;
-  elPlay.innerHTML = "⏸ Pausar";
 });
 
 elVolta.addEventListener("click", function(){
-  var estava = tocando; speechSynthesis.cancel();
+  var estava = tocando; pararAudio();
   tocando = false; elPlay.innerHTML = "▶ Continuar";
   mostrar(atual - 1, false);
   if (estava){ tocando = true; elPlay.innerHTML = "⏸ Pausar"; mostrar(atual, true); }
 });
 elFrente.addEventListener("click", function(){
-  var estava = tocando; speechSynthesis.cancel();
+  var estava = tocando; pararAudio();
   tocando = false; elPlay.innerHTML = "▶ Continuar";
   mostrar(atual + 1, false);
   if (estava){ tocando = true; elPlay.innerHTML = "⏸ Pausar"; mostrar(atual, true); }
@@ -342,7 +334,7 @@ document.addEventListener("keydown", function(e){
   if (e.key === "ArrowLeft"){ elVolta.click(); }
 });
 
-window.addEventListener("beforeunload", function(){ speechSynthesis.cancel(); });
+window.addEventListener("beforeunload", function(){ pararAudio(); });
 
 })();
 </script>
