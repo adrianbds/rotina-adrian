@@ -44,11 +44,23 @@
   nav.abas button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--acc)}
   nav.abas button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 
+  /* ajuda */
+  .ajuda{background:var(--surface-2);border:1px dashed var(--line);border-radius:var(--r);padding:10px 14px;margin-top:14px;font-size:13px;color:var(--ink-2);position:relative}
+  .ajuda b{color:var(--ink);font-weight:600}
+  .ajuda ul{margin:6px 0 0;padding-left:18px}
+  .ajuda li{margin:2px 0}
+  .ajuda .fechar{position:absolute;top:6px;right:8px;background:none;border:0;color:var(--ink-3);font-size:18px;cursor:pointer;line-height:1;padding:2px 6px}
+  .ajuda .fechar:hover{color:var(--ink)}
+
   /* hoje */
   .hoje{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:6px 16px 10px;margin-top:18px}
   .hoje .titulo{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:10px 0 4px;flex-wrap:wrap}
   .hoje .titulo b{font-family:var(--display);font-size:21px;letter-spacing:-.01em}
-  .hoje .titulo span{font-family:var(--mono);font-size:12px;color:var(--ink-3)}
+  .hoje .titulo .sem{font-family:var(--mono);font-size:11px;color:var(--acc);letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:2px}
+  .hoje .titulo span.t{font-family:var(--mono);font-size:12px;color:var(--ink-3)}
+  .hoje .subt{color:var(--ink-2);font-size:13px;margin:0 0 6px;padding-bottom:6px;border-bottom:1px dashed var(--line)}
+  .hoje .marcartudo{background:none;border:0;color:var(--ink-3);font-family:var(--mono);font-size:11px;text-decoration:underline;cursor:pointer;padding:6px 0 2px;display:block}
+  .hoje .marcartudo:hover{color:var(--ink)}
   .folga{color:var(--ink-2);padding:6px 0 10px;margin:0}
   .atras{margin-top:6px;border-top:1px dashed var(--line);padding-top:8px}
   .atras p{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--late);margin:4px 0 2px}
@@ -137,6 +149,16 @@
   <button type="button" role="tab" id="aba-eng" aria-selected="false">Inglês</button>
 </nav>
 
+<section class="ajuda" id="ajuda" hidden>
+  <button type="button" class="fechar" id="fecharAjuda" aria-label="Fechar">×</button>
+  <b>Como usar esta página</b>
+  <ul>
+    <li>No bloco <b>Hoje</b>, clique no botão colorido de cada tarefa — ele abre direto no Moodle ou no Open English.</li>
+    <li>Terminou? Marque o quadradinho ☐ ao lado. Fica salvo neste navegador.</li>
+    <li>Se já fez várias coisas direto no Moodle, use o link <i>"marcar toda a semana"</i> no fim do bloco Hoje.</li>
+  </ul>
+</section>
+
 <section class="hoje" id="hoje"></section>
 
 <div id="blocoPrazos">
@@ -202,7 +224,7 @@ var LIVE_PLN = ["tY44n3v4YMc","4rVzkVR6Cag","SsgBvq19pkw","A4hknPFBv94","lu4vZ1G
 
 /* id = chave das marcações salvas: nao renomear os que ja existem */
 function aula(d, n){
-  return {id:d+"-aula"+n, nome:"Videoaula 0"+n, disc:d,
+  return {id:d+"-aula"+n, nome:"Videoaula 0"+n+" (vídeo ~9 min + slide)", disc:d,
           a:[["Assistir", noCurso(CURSO[d], MOD_VIDEO[d][n-1])], ["Slide", pdf(SLIDE[d][n-1])]]};
 }
 /* so a Live 01 esta no Moodle (conferido em 03/11/2026); as outras seguem no YouTube */
@@ -396,6 +418,14 @@ function linha(t, mostrarData, onde){
   return li;
 }
 
+function semanaAtual(){
+  for (var i=0; i<SEMANAS.length; i++){
+    var fim = soma(SEMANAS[i].de, 6);
+    if (HOJE >= SEMANAS[i].de && HOJE <= fim) return SEMANAS[i];
+  }
+  return HOJE < INICIO ? SEMANAS[0] : SEMANAS[SEMANAS.length-1];
+}
+
 function renderHoje(){
   var box = document.getElementById("hoje");
   box.innerHTML = "";
@@ -403,17 +433,38 @@ function renderHoje(){
   var minhas = TODAS.filter(daAba);
   var deHoje = minhas.filter(function(t){ return t.data === HOJE; });
   var atrasadas = minhas.filter(function(t){ return t.data < HOJE && !feito(t.id); });
+  var sem = semanaAtual();
 
   var tit = document.createElement("div"); tit.className = "titulo";
-  var b = document.createElement("b"), sp = document.createElement("span");
-  b.textContent = "Hoje";
+  var cab = document.createElement("div");
+  var semEl = document.createElement("span"); semEl.className = "sem";
+  semEl.textContent = "Semana " + sem.n + " de " + SEMANAS.length + " · " + curto(sem.de) + " a " + curto(soma(sem.de,6));
+  var b = document.createElement("b");
+  b.textContent = HOJE < INICIO ? "A rotina começa em breve" : (deHoje.length ? "Hoje você precisa fazer isto" : "Hoje é dia livre");
+  cab.appendChild(semEl); cab.appendChild(b);
+  var sp = document.createElement("span"); sp.className = "t";
   sp.textContent = (HOJE < INICIO || !deHoje.length) ? "folga" : (TEMPO[ABA][dHoje] || "folga");
-  tit.appendChild(b); tit.appendChild(sp); box.appendChild(tit);
+  tit.appendChild(cab); tit.appendChild(sp); box.appendChild(tit);
 
   if (deHoje.length){
+    var sub = document.createElement("p"); sub.className = "subt";
+    sub.textContent = "Clique no botão colorido de cada item pra abrir no Moodle. Marque o ☐ quando terminar.";
+    box.appendChild(sub);
     var ul = document.createElement("ul"); ul.className = "ts";
     deHoje.forEach(function(t){ ul.appendChild(linha(t, false, "hoje")); });
     box.appendChild(ul);
+    var btMarcar = document.createElement("button");
+    btMarcar.type = "button"; btMarcar.className = "marcartudo";
+    var ts = TODAS.filter(function(t){ return t.sem === sem.n && daAba(t); });
+    var falta = ts.filter(function(t){ return !feito(t.id); }).length;
+    btMarcar.textContent = falta ? "já fiz tudo da semana no Moodle — marcar as " + falta + " restantes" : "semana inteira já marcada ✓";
+    btMarcar.disabled = !falta;
+    btMarcar.addEventListener("click", function(){
+      if (!confirm("Marcar como feito as " + falta + " tarefas da semana " + sem.n + "?")) return;
+      ts.forEach(function(t){ estado.feitos[t.id] = true; });
+      salvar(); render();
+    });
+    box.appendChild(btMarcar);
   } else {
     var prox = minhas.filter(function(t){ return t.data > HOJE; })[0];
     var p = document.createElement("p"); p.className = "folga";
@@ -526,6 +577,16 @@ function render(){
   document.getElementById("blocoMaterial").hidden = ABA !== "fac";
   renderHoje(); renderPrazos(); renderCrono(); renderMaterial(); renderSalvo();
 }
+
+(function(){
+  var CHAVE_AJUDA = "rotina-adrian-ajuda-fechada";
+  var box = document.getElementById("ajuda");
+  try { if (!localStorage.getItem(CHAVE_AJUDA)) box.hidden = false; } catch(e){ box.hidden = false; }
+  document.getElementById("fecharAjuda").addEventListener("click", function(){
+    box.hidden = true;
+    try { localStorage.setItem(CHAVE_AJUDA, "1"); } catch(e){}
+  });
+})();
 
 ["fac","eng"].forEach(function(a){
   document.getElementById("aba-"+a).addEventListener("click", function(){
