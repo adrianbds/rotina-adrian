@@ -508,7 +508,7 @@ function chaveVideo(t){
 function urlDaTarefa(t){
   var k = chaveVideo(t);
   if (VIDEO_LOCAL[k]) return VIDEO_LOCAL[k];
-  return "aulas/em-breve.html?id=" + encodeURIComponent(t.id) + "&nome=" + encodeURIComponent(t.nome) + "&disc=" + t.disc;
+  return (t.a && t.a[0]) ? t.a[0][1] : M;
 }
 function temVideoLocal(t){ return !!VIDEO_LOCAL[chaveVideo(t)]; }
 
@@ -564,6 +564,7 @@ function card(t){
   var a = document.createElement("a");
   a.className = "card " + t.disc + (feito(t.id) ? " feito" : "") + (naFila(t.id) ? " fila-moodle" : "") + (local ? "" : " breve-tag");
   a.href = destino;
+  if (!local) { a.target = "_blank"; a.rel = "noopener"; }
   var emoji = emojiAula(t);
   var num = "";
   var m = t.id.match(/aula(\d+)/);
@@ -572,7 +573,7 @@ function card(t){
   if (ms) num = "L"+ms[1];
   var dd = t.prazo ? diasAte(t.prazo) : null;
   var prazoTag = (t.prazo && !feito(t.id) && dd !== null && dd <= 14 && !naFila(t.id)) ? '<span class="prazo-tag">'+(dd<0?"VENCEU":dd===0?"HOJE":dd+"D")+'</span>' : '';
-  var tipo = local ? '🍿 vídeo-aula daqui' : '🎬 em produção';
+  var tipo = local ? '🍿 vídeo-aula daqui' : '↗ no Moodle';
   a.innerHTML =
     '<span class="selo">✓ ASSISTIDA</span>' + prazoTag +
     '<div class="thumb">'+emoji+(num ? '<span class="num">'+num+'</span>' : '')+'</div>' +
