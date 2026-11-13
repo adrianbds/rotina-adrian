@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Em produção</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23E50914'/%3E%3Ctext x='50%25' y='64%25' text-anchor='middle' font-size='18' fill='%23fff'%3E🎬%3C/text%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#0A0A0A; --surface:#141414; --line:#2A2A2A;
+    --ink:#F5F5F5; --ink-2:#B3B3B3; --ink-3:#737373; --fac:#E50914;
+    --display:Candara,Optima,"Segoe UI",system-ui,sans-serif;
+    --body:"Segoe UI",system-ui,-apple-system,sans-serif;
+    --mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;height:100%}
+  body{background:var(--bg);color:var(--ink);font-family:var(--body);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;text-align:center}
+  .box{max-width:560px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:40px 30px}
+  .emj{font-size:72px;margin-bottom:10px;animation:bate 2s ease-in-out infinite}
+  @keyframes bate{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+  h1{font-family:var(--display);font-size:clamp(24px,4vw,34px);margin:0 0 12px;letter-spacing:-.02em}
+  .nome{color:var(--fac);font-weight:600}
+  p{color:var(--ink-2);line-height:1.55;margin:8px 0}
+  .disc{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-3);background:rgba(255,255,255,.06);padding:5px 10px;border-radius:4px;margin:12px 0}
+  .btns{display:flex;gap:10px;justify-content:center;margin-top:22px;flex-wrap:wrap}
+  .btns a,.btns button{appearance:none;text-decoration:none;font-family:var(--body);font-size:14px;padding:11px 20px;border-radius:4px;border:0;cursor:pointer;font-weight:600}
+  .voltar{background:rgba(109,109,110,.7);color:var(--ink)}
+  .voltar:hover{background:rgba(109,109,110,.5)}
+  .fiz{background:var(--fac);color:#fff}
+  .fiz:hover{opacity:.9}
+  .fiz.marcado{background:#46D369;color:#000}
+  .nota{font-size:12px;color:var(--ink-3);margin-top:18px;line-height:1.45}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="emj">🎬</div>
+  <h1>Esse vídeo tá em produção</h1>
+  <p>A <span class="nome" id="nome">atividade</span> ainda não tem versão em novela de fruta — o Claude vai fazer quando chegar a hora.</p>
+  <div class="disc" id="disc">—</div>
+  <p>Se já é sua hora de estudar ela, me chama que eu produzo agora.</p>
+  <div class="btns">
+    <a class="voltar" href="../#fac">← voltar pro catálogo</a>
+    <button class="fiz" id="btnFiz" type="button">✅ Já fiz essa, marca no Moodle</button>
+  </div>
+  <p class="nota">Dica: você também pode marcar "já fiz" direto no card, passando o mouse em cima dele no catálogo.</p>
+</div>
+<script>
+(function(){
+  var p = new URLSearchParams(location.search);
+  var id = p.get("id") || "";
+  var nome = p.get("nome") || "atividade";
+  var disc = p.get("disc") || "";
+  var NOMES = {ia:"Introdução à Inteligência Artificial", arq:"Arquitetura de Computadores", pln:"PLN e IA", intro:"Introdução ao Curso"};
+  document.getElementById("nome").textContent = nome;
+  document.getElementById("disc").textContent = NOMES[disc] || disc;
+  document.title = "Em produção — " + nome;
+  var btn = document.getElementById("btnFiz");
+  var k = "rotina-adrian-v1";
+  function ler(){ try { return JSON.parse(localStorage.getItem(k)||"{}"); } catch(e){ return {}; } }
+  function estaMarcado(){ var e = ler(); return !!(e.feitos && e.feitos[id]); }
+  function refletir(){ btn.classList.toggle("marcado", estaMarcado()); btn.textContent = estaMarcado() ? "✓ marcada — tá na fila" : "✅ Já fiz essa, marca no Moodle"; }
+  refletir();
+  btn.addEventListener("click", function(){
+    var e = ler();
+    if (!e.feitos) e.feitos = {};
+    if (!e.filaMoodle) e.filaMoodle = {};
+    if (estaMarcado()){
+      delete e.feitos[id]; delete e.filaMoodle[id];
+    } else {
+      e.feitos[id] = true;
+      e.filaMoodle[id] = { nome: nome, disc: disc, em: new Date().toISOString() };
+    }
+    e.salvoEm = new Date().toISOString();
+    localStorage.setItem(k, JSON.stringify(e));
+    refletir();
+  });
+})();
+</script>
+</body>
+</html>

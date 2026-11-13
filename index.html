@@ -469,7 +469,10 @@ function semanaAtual(){
 
 /* ========= NETFLIX ========= */
 
-var VIDEO_LOCAL = { "ia-01":"aulas/ia-01.html" };
+var VIDEO_LOCAL = {
+  "ia-01":"aulas/ia-01.html",
+  "ia-apres":"aulas/ia-apres.html"
+};
 
 /* emoji "capa" por aula/disciplina */
 var CAPA = {
@@ -494,16 +497,20 @@ function emojiAula(t){
   return "🎥";
 }
 
-function urlDaTarefa(t){
-  var chave = t.disc + "-" + (t.id.match(/aula(\d+)/) ? "0"+t.id.match(/aula(\d+)/)[1] : "");
-  if (VIDEO_LOCAL[chave]) return VIDEO_LOCAL[chave];
-  return t.a && t.a[0] ? t.a[0][1] : "#";
-}
-function temVideoLocal(t){
+function chaveVideo(t){
   var m = t.id.match(/aula(\d+)/);
-  if (!m) return false;
-  return !!VIDEO_LOCAL[t.disc + "-0" + m[1]];
+  if (m) return t.disc + "-0" + m[1];
+  var l = t.id.match(/^pln-live(\d+)/);
+  if (l) return "pln-live" + l[1];
+  if (/-apres$/.test(t.id)) return t.disc + "-apres";
+  return t.id;
 }
+function urlDaTarefa(t){
+  var k = chaveVideo(t);
+  if (VIDEO_LOCAL[k]) return VIDEO_LOCAL[k];
+  return "aulas/em-breve.html?id=" + encodeURIComponent(t.id) + "&nome=" + encodeURIComponent(t.nome) + "&disc=" + t.disc;
+}
+function temVideoLocal(t){ return !!VIDEO_LOCAL[chaveVideo(t)]; }
 
 function proximaPendente(){
   var minhas = TODAS.filter(function(t){ return DISC[t.disc].cor === "fac"; });
@@ -555,9 +562,8 @@ function card(t){
   var local = temVideoLocal(t);
   var destino = urlDaTarefa(t);
   var a = document.createElement("a");
-  a.className = "card " + t.disc + (feito(t.id) ? " feito" : "") + (naFila(t.id) ? " fila-moodle" : "");
+  a.className = "card " + t.disc + (feito(t.id) ? " feito" : "") + (naFila(t.id) ? " fila-moodle" : "") + (local ? "" : " breve-tag");
   a.href = destino;
-  if (!local) { a.target = "_blank"; a.rel = "noopener"; }
   var emoji = emojiAula(t);
   var num = "";
   var m = t.id.match(/aula(\d+)/);
@@ -566,7 +572,7 @@ function card(t){
   if (ms) num = "L"+ms[1];
   var dd = t.prazo ? diasAte(t.prazo) : null;
   var prazoTag = (t.prazo && !feito(t.id) && dd !== null && dd <= 14 && !naFila(t.id)) ? '<span class="prazo-tag">'+(dd<0?"VENCEU":dd===0?"HOJE":dd+"D")+'</span>' : '';
-  var tipo = local ? '🍿 vídeo-aula daqui' : '↗ no Moodle';
+  var tipo = local ? '🍿 vídeo-aula daqui' : '🎬 em produção';
   a.innerHTML =
     '<span class="selo">✓ ASSISTIDA</span>' + prazoTag +
     '<div class="thumb">'+emoji+(num ? '<span class="num">'+num+'</span>' : '')+'</div>' +
