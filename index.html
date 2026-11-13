@@ -7,106 +7,131 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23101522'/%3E%3Cpath d='M9 17l5 5 9-11' stroke='%23F0B429' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <style>
   :root{
-    --bg:#101522; --surface:#171E30; --surface-2:#1E2739; --line:#2A3449;
-    --ink:#E9ECF5; --ink-2:#A8B2C8; --ink-3:#6F7C96;
-    --fac:#F0B429; --eng:#3DD6C4; --late:#FF6B6B;
-    --display:Candara,Optima,"Segoe UI",system-ui,sans-serif;
+    --bg:#0A0A0A; --surface:#141414; --surface-2:#1F1F1F; --line:#2A2A2A;
+    --ink:#F5F5F5; --ink-2:#B3B3B3; --ink-3:#737373;
+    --fac:#E50914; --eng:#3DD6C4; --late:#FF6B6B;
+    --ia:#F0B429; --arq:#6EA4FF; --pln:#D56CFF; --intro:#3DD6C4;
+    --display:"Netflix Sans",Candara,Optima,"Segoe UI",system-ui,sans-serif;
     --body:"Segoe UI",system-ui,-apple-system,sans-serif;
     --mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
-    --r:12px;
+    --r:4px;
     --acc:var(--fac);
-  }
-  @media (prefers-color-scheme:light){
-    :root{ --bg:#F2F3F7; --surface:#FFFFFF; --surface-2:#F7F8FC; --line:#DDE1EC;
-           --ink:#171E30; --ink-2:#4C5770; --ink-3:#8C96AC; --fac:#B57C00; --eng:#128A7B; --late:#D63A3A; }
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
-  body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased;padding-bottom:48px}
-  .wrap{max-width:820px;margin:0 auto;padding:0 16px}
+  body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased;padding-bottom:48px;overflow-x:hidden}
+  .wrap{max-width:1400px;margin:0 auto;padding:0}
+  .padL{padding:0 clamp(16px,4vw,56px)}
   a{color:inherit}
 
-  header{padding:28px 0 6px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
-  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin:0}
-  h1{font-family:var(--display);font-size:clamp(26px,4.6vw,36px);font-weight:700;letter-spacing:-.02em;margin:4px 0 0;line-height:1.05}
+  /* HEADER Netflix */
+  header{padding:18px clamp(16px,4vw,56px) 10px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:linear-gradient(to bottom,rgba(0,0,0,.7),transparent);position:relative;z-index:10}
+  header .logo{display:flex;align-items:center;gap:14px}
+  header .logo .marca{font-family:var(--display);font-weight:900;font-size:26px;letter-spacing:-.04em;color:var(--fac);line-height:1}
+  header .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin:0}
   .entrar{display:flex;gap:6px;flex-wrap:wrap}
-  .entrar a{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;
-    background:var(--surface);color:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:7px 10px}
-  .entrar a:hover{color:var(--ink);border-color:var(--ink-3)}
+  .entrar a{font-family:var(--body);font-size:12px;text-decoration:none;color:var(--ink-2);padding:7px 12px;border-radius:4px;background:rgba(255,255,255,.06)}
+  .entrar a:hover{color:var(--ink);background:rgba(255,255,255,.12)}
 
-  h2{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin:28px 0 10px}
+  h2{font-family:var(--display);font-size:clamp(17px,2.3vw,22px);font-weight:700;letter-spacing:-.01em;color:var(--ink);margin:30px 0 12px;padding:0 clamp(16px,4vw,56px)}
 
   /* abas */
-  nav.abas{display:flex;gap:4px;margin-top:18px;border-bottom:1px solid var(--line)}
+  nav.abas{display:flex;gap:4px;padding:0 clamp(16px,4vw,56px);border-bottom:1px solid var(--line)}
   nav.abas button{appearance:none;background:none;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;
-    color:var(--ink-3);font-family:var(--display);font-size:17px;font-weight:600;padding:9px 14px;cursor:pointer}
+    color:var(--ink-3);font-family:var(--display);font-size:17px;font-weight:600;padding:9px 16px;cursor:pointer}
   nav.abas button:hover{color:var(--ink-2)}
-  nav.abas button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--acc)}
-  nav.abas button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+  nav.abas button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--fac)}
+  nav.abas button:focus-visible{outline:2px solid var(--fac);outline-offset:2px}
 
-  /* ajuda */
-  .ajuda{background:var(--surface-2);border:1px dashed var(--line);border-radius:var(--r);padding:10px 14px;margin-top:14px;font-size:13px;color:var(--ink-2);position:relative}
-  .ajuda b{color:var(--ink);font-weight:600}
-  .ajuda ul{margin:6px 0 0;padding-left:18px}
-  .ajuda li{margin:2px 0}
-  .ajuda .fechar{position:absolute;top:6px;right:8px;background:none;border:0;color:var(--ink-3);font-size:18px;cursor:pointer;line-height:1;padding:2px 6px}
-  .ajuda .fechar:hover{color:var(--ink)}
+  /* HERO Netflix */
+  .hero{position:relative;height:clamp(360px,56vh,560px);padding:clamp(60px,8vh,100px) clamp(16px,4vw,56px) clamp(30px,6vh,70px);display:flex;align-items:flex-end;overflow:hidden;background:#000}
+  .hero .bg{position:absolute;inset:0;z-index:0;opacity:.55}
+  .hero .bg::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#0A0A0A 0%,rgba(10,10,10,.6) 40%,transparent 70%),linear-gradient(to top,#0A0A0A 0%,transparent 35%);z-index:2}
+  .hero .bg .art{position:absolute;inset:0;display:flex;align-items:center;justify-content:flex-end;padding-right:5%;font-size:clamp(200px,32vw,400px);filter:blur(1px) saturate(.8);user-select:none}
+  .hero .conteudo{position:relative;z-index:3;max-width:560px}
+  .hero .label{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--fac);margin:0 0 6px;font-weight:700}
+  .hero h1{font-family:var(--display);font-size:clamp(28px,5vw,54px);font-weight:900;letter-spacing:-.02em;margin:0 0 10px;line-height:1.05;text-shadow:0 2px 10px rgba(0,0,0,.6)}
+  .hero .meta{display:flex;gap:10px;align-items:center;margin-bottom:10px;font-size:13px;color:var(--ink-2)}
+  .hero .meta .tag{background:rgba(255,255,255,.14);padding:2px 8px;border-radius:3px;font-family:var(--mono);font-size:11px}
+  .hero p.sinopse{font-size:clamp(14px,1.5vw,16px);color:var(--ink);text-shadow:0 1px 6px rgba(0,0,0,.6);margin:0 0 18px;line-height:1.45}
+  .hero .btns{display:flex;gap:10px;flex-wrap:wrap}
+  .hero .play{appearance:none;background:var(--ink);color:#000;border:0;font-family:var(--body);font-size:16px;font-weight:700;padding:11px 24px;border-radius:4px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+  .hero .play:hover{background:rgba(255,255,255,.75)}
+  .hero .info{appearance:none;background:rgba(109,109,110,.7);color:var(--ink);border:0;font-family:var(--body);font-size:16px;font-weight:600;padding:11px 20px;border-radius:4px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+  .hero .info:hover{background:rgba(109,109,110,.5)}
 
-  /* hoje */
-  .hoje{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:6px 16px 10px;margin-top:18px}
+  /* CARROSSEL de linhas */
+  .linha{margin:8px 0 28px}
+  .linha .cab{display:flex;justify-content:space-between;align-items:baseline;padding:0 clamp(16px,4vw,56px);margin-bottom:10px;gap:10px}
+  .linha .cab h3{font-family:var(--display);font-size:clamp(16px,2vw,20px);font-weight:700;margin:0;color:var(--ink);letter-spacing:-.01em}
+  .linha .cab .cont{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.1em;text-transform:uppercase}
+  .carrossel{display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;padding:0 clamp(16px,4vw,56px) 10px;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:var(--surface-2) transparent}
+  .carrossel::-webkit-scrollbar{height:6px}
+  .carrossel::-webkit-scrollbar-thumb{background:var(--surface-2);border-radius:3px}
+
+  /* CARD estilo Netflix */
+  .card{flex:0 0 clamp(190px,22vw,280px);aspect-ratio:16/9;scroll-snap-align:start;position:relative;border-radius:var(--r);overflow:hidden;cursor:pointer;background:var(--surface);text-decoration:none;color:var(--ink);transition:transform .25s ease,box-shadow .25s ease;display:block;isolation:isolate}
+  .card:hover{transform:scale(1.08);z-index:5;box-shadow:0 20px 40px rgba(0,0,0,.6)}
+  .card .thumb{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(70px,8vw,110px);color:rgba(255,255,255,.95);background:linear-gradient(135deg,var(--c1,#333),var(--c2,#111));text-shadow:0 4px 20px rgba(0,0,0,.4)}
+  .card .thumb .num{position:absolute;bottom:6px;right:10px;font-family:var(--display);font-size:clamp(50px,6vw,80px);font-weight:900;color:rgba(0,0,0,.35);line-height:1;letter-spacing:-.05em;-webkit-text-stroke:2px rgba(255,255,255,.4);text-stroke:2px rgba(255,255,255,.4)}
+  .card .over{position:absolute;inset:auto 0 0 0;padding:10px 12px 12px;background:linear-gradient(to top,rgba(0,0,0,.95) 0%,rgba(0,0,0,.7) 60%,transparent);color:#fff}
+  .card .over .nm{font-family:var(--display);font-weight:700;font-size:14px;line-height:1.2;margin:0 0 3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .card .over .sb{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--ink-2);text-transform:uppercase}
+  .card.feito .thumb{filter:saturate(.3) brightness(.65)}
+  .card .selo{position:absolute;top:8px;left:8px;background:var(--fac);color:#fff;font-family:var(--mono);font-size:10px;letter-spacing:.1em;padding:3px 8px;border-radius:3px;font-weight:700;text-transform:uppercase;z-index:2;display:none}
+  .card.feito .selo{display:inline-block;background:#46D369;color:#000}
+  .card .prazo-tag{position:absolute;top:8px;right:8px;background:rgba(255,100,100,.95);color:#fff;font-family:var(--mono);font-size:10px;letter-spacing:.06em;padding:3px 7px;border-radius:3px;font-weight:700;text-transform:uppercase;z-index:2}
+  .card .barra{position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,.2);z-index:2}
+  .card .barra::after{content:"";position:absolute;inset:0;background:var(--fac);width:var(--p,0%)}
+  .card.breve{opacity:.6;cursor:not-allowed}
+  .card.breve .thumb{filter:brightness(.5)}
+  .card.breve::after{content:"EM BREVE";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.75);color:#fff;font-family:var(--mono);font-size:11px;letter-spacing:.15em;padding:5px 12px;border-radius:4px;z-index:3}
+
+  .card.ia{--c1:#8A6500;--c2:#2A1E00}
+  .card.arq{--c1:#1D3B7A;--c2:#0B1830}
+  .card.pln{--c1:#5A1F85;--c2:#1C0A2B}
+  .card.intro{--c1:#0F5E55;--c2:#042019}
+  .card.moodle{--c1:#333;--c2:#111}
+
+  /* prazos */
+  .prazos{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:0 clamp(16px,4vw,56px)}
+  .prazo{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px 14px;min-width:0}
+  .prazo .d{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--ink)}
+  .prazo .o{font-size:13px;color:var(--ink-2);display:block;line-height:1.3;margin-top:3px}
+  .prazo .f{font-family:var(--mono);font-size:11px;color:var(--ink-3);display:block;margin-top:6px;letter-spacing:.06em}
+  .prazo.prox{border-color:var(--fac);background:linear-gradient(135deg,rgba(229,9,20,.08),var(--surface))}
+  .prazo.prox .f{color:var(--fac)}
+  .prazo.ok{opacity:.4}
+  .prazo.ok .f{color:#46D369}
+
+  /* inglês — mantém estrutura antiga simples */
+  .ingles-wrap{padding:0 clamp(16px,4vw,56px)}
+  .hoje{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 16px 10px;margin-top:18px}
   .hoje .titulo{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:10px 0 4px;flex-wrap:wrap}
   .hoje .titulo b{font-family:var(--display);font-size:21px;letter-spacing:-.01em}
-  .hoje .titulo .sem{font-family:var(--mono);font-size:11px;color:var(--acc);letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:2px}
+  .hoje .titulo .sem{font-family:var(--mono);font-size:11px;color:var(--eng);letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:2px}
   .hoje .titulo span.t{font-family:var(--mono);font-size:12px;color:var(--ink-3)}
   .hoje .subt{color:var(--ink-2);font-size:13px;margin:0 0 6px;padding-bottom:6px;border-bottom:1px dashed var(--line)}
-  .hoje .marcartudo{background:none;border:0;color:var(--ink-3);font-family:var(--mono);font-size:11px;text-decoration:underline;cursor:pointer;padding:6px 0 2px;display:block}
-  .hoje .marcartudo:hover{color:var(--ink)}
   .folga{color:var(--ink-2);padding:6px 0 10px;margin:0}
   .atras{margin-top:6px;border-top:1px dashed var(--line);padding-top:8px}
   .atras p{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--late);margin:4px 0 2px}
-
-  /* prazos */
-  .prazos{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
-  .prazo{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 10px;min-width:0}
-  .prazo .d{font-family:var(--mono);font-size:15px;font-weight:700}
-  .prazo .o{font-size:12px;color:var(--ink-2);display:block;line-height:1.3;margin-top:2px}
-  .prazo .f{font-family:var(--mono);font-size:11px;color:var(--ink-3);display:block;margin-top:4px}
-  .prazo.prox{border-color:var(--fac)}
-  .prazo.prox .f{color:var(--fac)}
-  .prazo.ok{opacity:.45}
-
-  /* tarefa */
   ul.ts{list-style:none;margin:0;padding:0}
   li.t{display:flex;align-items:center;gap:12px;padding:9px 0;border-top:1px solid var(--line)}
   li.t:first-child{border-top:0}
-  li.t input{appearance:none;flex:0 0 auto;width:20px;height:20px;margin:0;cursor:pointer;border:1.5px solid var(--ink-3);border-radius:6px;position:relative;background:transparent}
+  li.t input{appearance:none;flex:0 0 auto;width:20px;height:20px;margin:0;cursor:pointer;border:1.5px solid var(--ink-3);border-radius:4px;position:relative;background:transparent}
   li.t input:checked{background:var(--cor);border-color:var(--cor)}
   li.t input:checked::after{content:"";position:absolute;left:6px;top:2px;width:5px;height:10px;border:solid var(--bg);border-width:0 2px 2px 0;transform:rotate(42deg)}
-  li.t input:focus-visible,.btn:focus-visible,summary:focus-visible{outline:2px solid var(--fac);outline-offset:2px}
   li.t .c{flex:1;min-width:0}
   li.t .n{display:block;font-size:15px;cursor:pointer}
   li.t .s{display:block;font-size:12px;color:var(--ink-3)}
   li.t .s::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--cor);margin-right:6px;vertical-align:1px}
   li.t .s em{font-style:normal;color:var(--late);font-weight:600}
   li.t.feito .n{text-decoration:line-through;color:var(--ink-3)}
-  li.t.feito .btn{opacity:.5}
-  .acoes{display:flex;gap:6px;flex-wrap:wrap}
-  li.t .acoes{flex:0 0 auto;justify-content:flex-end}
-
-  /* material das disciplinas */
-  .mat{--cor:var(--fac);background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:11px 16px;margin-bottom:6px;
-    display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-  .mat b{font-size:15px;font-weight:600}
-  .nota{font-size:12px;color:var(--ink-3);margin:8px 0 0}
-  .btn{text-decoration:none;white-space:nowrap;font-size:13px;font-weight:600;border-radius:8px;padding:7px 12px;
-    background:var(--cor);color:var(--bg);border:1px solid var(--cor)}
+  li.t .acoes{flex:0 0 auto}
+  .btn{text-decoration:none;white-space:nowrap;font-size:13px;font-weight:600;border-radius:4px;padding:7px 14px;background:var(--cor);color:#000;border:0;display:inline-block}
   .btn:hover{filter:brightness(1.1)}
-  .btn.sec{background:transparent;color:var(--ink-2);border-color:var(--line);font-weight:500}
-  .btn.sec:hover{border-color:var(--ink-3);color:var(--ink)}
 
-  /* cronograma */
-  details.sem{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);margin-bottom:6px}
-  details.sem[open]{border-color:var(--ink-3)}
+  details.sem{background:var(--surface);border:1px solid var(--line);border-radius:6px;margin-bottom:6px}
   summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:11px 16px}
   summary::-webkit-details-marker{display:none}
   summary .num{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--ink-2);width:26px}
@@ -114,19 +139,19 @@
   summary .tt b{display:block;font-size:15px;font-weight:600}
   summary .tt span{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
   summary .cont{font-family:var(--mono);font-size:12px;color:var(--ink-3)}
-  summary .cont.tudo{color:var(--acc)}
-  details.sem.atual summary .num{color:var(--acc)}
+  details.sem.atual summary .num{color:var(--eng)}
   .corpo{padding:0 16px 10px}
   .dia{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin:10px 0 2px}
 
-  footer{margin-top:30px;display:flex;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+  .ajuda{display:none}
+
+  footer{margin-top:30px;padding:0 clamp(16px,4vw,56px);display:flex;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--ink-3)}
   footer button{background:none;border:0;padding:0;color:var(--ink-3);font:inherit;text-decoration:underline;cursor:pointer}
   footer button:hover{color:var(--ink)}
 
-  @media (max-width:640px){
+  @media (max-width:800px){
     .prazos{grid-template-columns:repeat(2,1fr)}
-    li.t{flex-wrap:wrap}
-    li.t .acoes{width:100%;padding-left:32px;justify-content:flex-start}
+    .hero{height:auto;min-height:340px;padding-bottom:30px;padding-top:40px}
   }
 </style>
 </head>
@@ -134,13 +159,13 @@
 <div class="wrap">
 
 <header>
-  <div>
+  <div class="logo">
+    <span class="marca">ADRIANFLIX</span>
     <p class="eyebrow" id="data">—</p>
-    <h1>Rotina do Adrian</h1>
   </div>
   <div class="entrar">
-    <a href="https://portaldoaluno.fatecie.edu.br/login" target="_blank" rel="noopener">Entrar na faculdade</a>
-    <a href="https://student.openenglish.com/login.html" target="_blank" rel="noopener">Entrar no inglês</a>
+    <a href="https://portaldoaluno.fatecie.edu.br/login" target="_blank" rel="noopener">Portal da Faculdade</a>
+    <a href="https://student.openenglish.com/login.html" target="_blank" rel="noopener">Open English</a>
   </div>
 </header>
 
@@ -149,30 +174,19 @@
   <button type="button" role="tab" id="aba-eng" aria-selected="false">Inglês</button>
 </nav>
 
-<section class="ajuda" id="ajuda" hidden>
-  <button type="button" class="fechar" id="fecharAjuda" aria-label="Fechar">×</button>
-  <b>Como usar esta página</b>
-  <ul>
-    <li>No bloco <b>Hoje</b>, clique no botão colorido de cada tarefa — ele abre direto no Moodle ou no Open English.</li>
-    <li>Terminou? Marque o quadradinho ☐ ao lado. Fica salvo neste navegador.</li>
-    <li>Se já fez várias coisas direto no Moodle, use o link <i>"marcar toda a semana"</i> no fim do bloco Hoje.</li>
-  </ul>
-</section>
-
-<section class="hoje" id="hoje"></section>
-
-<div id="blocoPrazos">
-<h2>Prazos da faculdade</h2>
-<div class="prazos" id="prazos"></div>
+<!-- aba Faculdade: Netflix -->
+<div id="telaFac">
+  <section class="hero" id="hero"></section>
+  <div id="linhas"></div>
+  <h2>Prazos da faculdade</h2>
+  <div class="prazos" id="prazos"></div>
 </div>
 
-<h2>Cronograma</h2>
-<div id="crono"></div>
-
-<div id="blocoMaterial">
-<h2>Disciplina vigente — material de cada uma</h2>
-<div id="material"></div>
-<p class="nota">Prazos que valem são os das atividades no Moodle. O PDF “Calendário acadêmico” mostra datas de outra turma (início em 01/09) — se bater dúvida, pergunte ao tutor.</p>
+<!-- aba Inglês: estrutura antiga -->
+<div id="telaEng" class="ingles-wrap" hidden>
+  <section class="hoje" id="hoje"></section>
+  <h2 style="padding:0;margin:28px 0 12px">Cronograma</h2>
+  <div id="crono"></div>
 </div>
 
 <footer>
@@ -426,6 +440,161 @@ function semanaAtual(){
   return HOJE < INICIO ? SEMANAS[0] : SEMANAS[SEMANAS.length-1];
 }
 
+/* ========= NETFLIX ========= */
+
+var VIDEO_LOCAL = { "ia-01":"aulas/ia-01.html" };
+
+/* emoji "capa" por aula/disciplina */
+var CAPA = {
+  "ia-aula1":"🕰️","ia-aula2":"🌱","ia-aula3":"🤖","ia-aula4":"🧠",
+  "ia-aula5":"📚","ia-aula6":"⚙️","ia-aula7":"🚀","ia-aula8":"🎯","ia-apres":"🎬",
+  "arq-aula1":"💻","arq-aula2":"🔌","arq-aula3":"🧩","arq-aula4":"⚡",
+  "arq-aula5":"🔧","arq-aula6":"💾","arq-aula7":"🖥️","arq-aula8":"🧮","arq-apres":"🎬",
+  "pln-live1":"🗣️","pln-live2":"💬","pln-live3":"📝","pln-live4":"🎙️","pln-live5":"🎙️",
+  "i-boasvindas":"👋","i-agenda":"📅","i-slides":"📊","i-livro":"📖","i-apostila":"📚","i-trilha":"🛤️","i-apost2":"📒","i-forum":"💬"
+};
+
+function emojiAula(t){
+  if (CAPA[t.id]) return CAPA[t.id];
+  if (/apostila/.test(t.id)) return "📚";
+  if (/forum/.test(t.id)) return "💬";
+  if (/apa/.test(t.id)) return "📝";
+  if (/^a1-/.test(t.id)) return "📋";
+  if (/^a2-/.test(t.id)) return "📋";
+  if (/prova/.test(t.id)) return "🎓";
+  if (/enq/.test(t.id) || /enquete/.test(t.id)) return "📊";
+  if (/regul/.test(t.id)) return "⚖️";
+  return "🎥";
+}
+
+function urlDaTarefa(t){
+  var chave = t.disc + "-" + (t.id.match(/aula(\d+)/) ? "0"+t.id.match(/aula(\d+)/)[1] : "");
+  if (VIDEO_LOCAL[chave]) return VIDEO_LOCAL[chave];
+  return t.a && t.a[0] ? t.a[0][1] : "#";
+}
+function temVideoLocal(t){
+  var m = t.id.match(/aula(\d+)/);
+  if (!m) return false;
+  return !!VIDEO_LOCAL[t.disc + "-0" + m[1]];
+}
+
+function proximaPendente(){
+  var minhas = TODAS.filter(function(t){ return DISC[t.disc].cor === "fac"; });
+  var ehVideoAula = function(t){ return /aula\d+|^pln-live/.test(t.id); };
+  var aulas = minhas.filter(function(t){ return ehVideoAula(t) && !feito(t.id); });
+  if (aulas.length) return aulas[0];
+  var pend = minhas.filter(function(t){ return !feito(t.id); });
+  if (pend.length) return pend[0];
+  return minhas[0];
+}
+
+function renderHero(){
+  var box = document.getElementById("hero");
+  var t = proximaPendente();
+  if (!t){ box.innerHTML = ""; return; }
+  var local = temVideoLocal(t);
+  var sinopse = DISC[t.disc].nome;
+  var emoji = emojiAula(t);
+  var label = feito(t.id) ? "VOCÊ JÁ ASSISTIU" : (t.data < HOJE ? "ATRASADA" : t.data === HOJE ? "PRA HOJE" : "PRÓXIMA NA FILA");
+  var destino = urlDaTarefa(t);
+  var btnLabel = local ? "▶ Assistir agora" : "▶ Abrir";
+  var cor = "var(--"+t.disc+")";
+  box.innerHTML =
+    '<div class="bg" style="background:radial-gradient(ellipse at 70% 50%,'+cor+'22,transparent 60%)">' +
+      '<div class="art">'+emoji+'</div>' +
+    '</div>' +
+    '<div class="conteudo">' +
+      '<p class="label">'+label+'</p>' +
+      '<h1>'+t.nome.replace(/\s*\([^)]+\)\s*$/, "")+'</h1>' +
+      '<div class="meta"><span class="tag">'+DISC[t.disc].nome+'</span>' +
+        (t.prazo ? '<span>⏱️ até '+curto(t.prazo)+'</span>' : '') +
+        (local ? '<span>🍿 vídeo-aula daqui</span>' : '<span>↗ abre no Moodle</span>') +
+      '</div>' +
+      '<p class="sinopse">'+sinopse+(t.prazo ? '. Prazo final: '+curto(t.prazo)+'.' : '.')+ (local ? ' Narrada com animação em frutas.' : ' Esta é uma atividade que você faz direto na faculdade.') + '</p>' +
+      '<div class="btns">' +
+        '<a class="play" href="'+destino+'"'+(local ? '' : ' target="_blank" rel="noopener"')+'>'+btnLabel+'</a>' +
+        '<button class="info" id="btnMarcarHero">'+(feito(t.id) ? '✓ Assistida' : 'ℹ Marcar como vista')+'</button>' +
+      '</div>' +
+    '</div>';
+  document.getElementById("btnMarcarHero").addEventListener("click", function(){
+    if (feito(t.id)) delete estado.feitos[t.id]; else estado.feitos[t.id] = true;
+    salvar(); render();
+  });
+}
+
+function card(t){
+  var local = temVideoLocal(t);
+  var destino = urlDaTarefa(t);
+  var a = document.createElement("a");
+  a.className = "card " + t.disc + (feito(t.id) ? " feito" : "") + (!local && !t.a ? " breve" : "");
+  a.href = destino;
+  if (!local) { a.target = "_blank"; a.rel = "noopener"; }
+  var emoji = emojiAula(t);
+  var num = "";
+  var m = t.id.match(/aula(\d+)/);
+  if (m) num = m[1];
+  var ms = t.id.match(/live(\d+)/);
+  if (ms) num = "L"+ms[1];
+  var dd = t.prazo ? diasAte(t.prazo) : null;
+  var prazoTag = (t.prazo && !feito(t.id) && dd !== null && dd <= 14) ? '<span class="prazo-tag">'+(dd<0?"VENCEU":dd===0?"HOJE":dd+"D")+'</span>' : '';
+  a.innerHTML =
+    '<span class="selo">✓ Assistida</span>' + prazoTag +
+    '<div class="thumb">'+emoji+(num ? '<span class="num">'+num+'</span>' : '')+'</div>' +
+    '<div class="over">' +
+      '<p class="nm">'+t.nome.replace(/\s*\([^)]+\)\s*$/, "")+'</p>' +
+      '<span class="sb">'+DISC[t.disc].nome+(local ? ' · vídeo' : (/pdf|slide|apostila/i.test(t.nome) ? ' · material' : ' · no Moodle'))+'</span>' +
+    '</div>' +
+    (feito(t.id) ? '<div class="barra" style="--p:100%"></div>' : '');
+  a.addEventListener("click", function(ev){
+    if (ev.shiftKey){
+      ev.preventDefault();
+      if (feito(t.id)) delete estado.feitos[t.id]; else estado.feitos[t.id] = true;
+      salvar(); render();
+    }
+  });
+  return a;
+}
+
+function linhaCat(titulo, lista, extra){
+  if (!lista.length) return null;
+  var el = document.createElement("div");
+  el.className = "linha";
+  var feitos = lista.filter(function(t){ return feito(t.id); }).length;
+  el.innerHTML = '<div class="cab"><h3></h3><span class="cont">'+feitos+'/'+lista.length+' '+(extra||"")+'</span></div>';
+  el.querySelector("h3").textContent = titulo;
+  var car = document.createElement("div");
+  car.className = "carrossel";
+  lista.forEach(function(t){ car.appendChild(card(t)); });
+  el.appendChild(car);
+  return el;
+}
+
+function renderNetflix(){
+  renderHero();
+  var box = document.getElementById("linhas");
+  box.innerHTML = "";
+  var todas = TODAS.filter(function(t){ return DISC[t.disc].cor === "fac"; });
+
+  /* Continue assistindo: atrasadas + hoje + próxima semana */
+  var continua = todas.filter(function(t){ return !feito(t.id) && t.data <= soma(HOJE, 7); });
+  var l0 = linhaCat("Continue assistindo", continua.slice(0, 10));
+  if (l0) box.appendChild(l0);
+
+  /* por disciplina — videoaulas / apresentações / material */
+  function ehAula(t){ return /aula\d+|apres|live\d+/.test(t.id); }
+  ["ia","arq","pln","intro"].forEach(function(d){
+    var aulas = todas.filter(function(t){ return t.disc === d && ehAula(t); });
+    if (aulas.length){
+      box.appendChild(linhaCat(NOME_LONGO[d], aulas, "aulas"));
+    }
+  });
+
+  /* Atividades no Moodle: quizzes, APAs, provas, enquetes, fóruns, apostilas */
+  var atividades = todas.filter(function(t){ return !ehAula(t); });
+  var l = linhaCat("Atividades no Moodle (você faz na faculdade)", atividades, "itens");
+  if (l) box.appendChild(l);
+}
+
 function renderHoje(){
   var box = document.getElementById("hoje");
   box.innerHTML = "";
@@ -544,23 +713,6 @@ function renderCrono(){
   });
 }
 
-function renderMaterial(){
-  var box = document.getElementById("material");
-  box.innerHTML = "";
-  MATERIAL.forEach(function(m){
-    var el = document.createElement("div"); el.className = "mat";
-    var b = document.createElement("b"); b.textContent = NOME_LONGO[m.disc];
-    var ac = document.createElement("div"); ac.className = "acoes";
-    m.a.forEach(function(x, i){
-      var a = document.createElement("a");
-      a.className = "btn" + (i ? " sec" : ""); a.href = x[1]; a.target = "_blank"; a.rel = "noopener";
-      a.textContent = x[0];
-      ac.appendChild(a);
-    });
-    el.appendChild(b); el.appendChild(ac); box.appendChild(el);
-  });
-}
-
 function renderSalvo(){
   var el = document.getElementById("salvo");
   if (!estado.salvoEm){ el.textContent = "nada marcado ainda · fica salvo neste navegador"; return; }
@@ -573,20 +725,12 @@ function render(){
   document.documentElement.style.setProperty("--acc", "var(--" + ABA + ")");
   document.getElementById("aba-fac").setAttribute("aria-selected", ABA === "fac");
   document.getElementById("aba-eng").setAttribute("aria-selected", ABA === "eng");
-  document.getElementById("blocoPrazos").hidden = ABA !== "fac";
-  document.getElementById("blocoMaterial").hidden = ABA !== "fac";
-  renderHoje(); renderPrazos(); renderCrono(); renderMaterial(); renderSalvo();
+  document.getElementById("telaFac").hidden = ABA !== "fac";
+  document.getElementById("telaEng").hidden = ABA !== "eng";
+  if (ABA === "fac"){ renderNetflix(); renderPrazos(); }
+  else { renderHoje(); renderCrono(); }
+  renderSalvo();
 }
-
-(function(){
-  var CHAVE_AJUDA = "rotina-adrian-ajuda-fechada";
-  var box = document.getElementById("ajuda");
-  try { if (!localStorage.getItem(CHAVE_AJUDA)) box.hidden = false; } catch(e){ box.hidden = false; }
-  document.getElementById("fecharAjuda").addEventListener("click", function(){
-    box.hidden = true;
-    try { localStorage.setItem(CHAVE_AJUDA, "1"); } catch(e){}
-  });
-})();
 
 ["fac","eng"].forEach(function(a){
   document.getElementById("aba-"+a).addEventListener("click", function(){
@@ -599,8 +743,8 @@ function render(){
 (function(){
   var d = new Date();
   document.getElementById("data").textContent =
-    ["domingo","segunda","terça","quarta","quinta","sexta","sábado"][d.getDay()] + ", " + d.getDate() + " de " +
-    ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"][d.getMonth()];
+    ["dom","seg","ter","qua","qui","sex","sáb"][d.getDay()] + " · " + d.getDate() + " " +
+    ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"][d.getMonth()];
 })();
 
 document.getElementById("btnBackup").addEventListener("click", function(){
