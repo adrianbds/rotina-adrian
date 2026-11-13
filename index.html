@@ -60,14 +60,19 @@
   .hero .info{appearance:none;background:rgba(109,109,110,.7);color:var(--ink);border:0;font-family:var(--body);font-size:16px;font-weight:600;padding:11px 20px;border-radius:4px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
   .hero .info:hover{background:rgba(109,109,110,.5)}
 
-  /* CARROSSEL de linhas */
-  .linha{margin:8px 0 28px}
+  /* CARROSSEL com setas */
+  .linha{margin:8px 0 28px;position:relative}
   .linha .cab{display:flex;justify-content:space-between;align-items:baseline;padding:0 clamp(16px,4vw,56px);margin-bottom:10px;gap:10px}
   .linha .cab h3{font-family:var(--display);font-size:clamp(16px,2vw,20px);font-weight:700;margin:0;color:var(--ink);letter-spacing:-.01em}
   .linha .cab .cont{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.1em;text-transform:uppercase}
-  .carrossel{display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;padding:0 clamp(16px,4vw,56px) 10px;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:var(--surface-2) transparent}
-  .carrossel::-webkit-scrollbar{height:6px}
-  .carrossel::-webkit-scrollbar-thumb{background:var(--surface-2);border-radius:3px}
+  .carr-wrap{position:relative}
+  .carrossel{display:flex;gap:6px;overflow-x:hidden;overflow-y:hidden;padding:12px clamp(16px,4vw,56px);scroll-behavior:smooth}
+  .seta{position:absolute;top:0;bottom:0;width:clamp(16px,4vw,56px);background:linear-gradient(90deg,rgba(10,10,10,.9),rgba(10,10,10,.3));border:0;color:#fff;font-size:28px;cursor:pointer;z-index:4;display:flex;align-items:center;justify-content:center;transition:background .2s;font-family:var(--display);font-weight:900}
+  .seta.esq{left:0}
+  .seta.dir{right:0;background:linear-gradient(-90deg,rgba(10,10,10,.9),rgba(10,10,10,.3))}
+  .seta:hover{background:rgba(10,10,10,.98)}
+  .seta:disabled{opacity:0;pointer-events:none}
+  @media (max-width:800px){ .seta{display:none} .carrossel{overflow-x:auto;scroll-snap-type:x mandatory} }
 
   /* CARD estilo Netflix */
   .card{flex:0 0 clamp(190px,22vw,280px);aspect-ratio:16/9;scroll-snap-align:start;position:relative;border-radius:var(--r);overflow:hidden;cursor:pointer;background:var(--surface);text-decoration:none;color:var(--ink);transition:transform .25s ease,box-shadow .25s ease;display:block;isolation:isolate}
@@ -83,6 +88,12 @@
   .card .prazo-tag{position:absolute;top:8px;right:8px;background:rgba(255,100,100,.95);color:#fff;font-family:var(--mono);font-size:10px;letter-spacing:.06em;padding:3px 7px;border-radius:3px;font-weight:700;text-transform:uppercase;z-index:2}
   .card .barra{position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,.2);z-index:2}
   .card .barra::after{content:"";position:absolute;inset:0;background:var(--fac);width:var(--p,0%)}
+  .card .atos{position:absolute;top:8px;right:8px;display:flex;gap:4px;z-index:3;opacity:0;transition:opacity .2s}
+  .card:hover .atos{opacity:1}
+  .card .atos button{appearance:none;background:rgba(0,0,0,.8);color:#fff;border:1px solid rgba(255,255,255,.3);font-family:var(--mono);font-size:10px;letter-spacing:.06em;padding:4px 7px;border-radius:3px;cursor:pointer;text-transform:uppercase;font-weight:700}
+  .card .atos button:hover{background:#fff;color:#000}
+  .card .atos button.marcado{background:#46D369;color:#000;border-color:#46D369}
+  .card.fila-moodle::before{content:"⏳ aguardando marcar no Moodle";position:absolute;top:8px;left:8px;background:#F0B429;color:#000;font-family:var(--mono);font-size:10px;letter-spacing:.06em;padding:3px 7px;border-radius:3px;font-weight:700;text-transform:uppercase;z-index:2}
   .card.breve{opacity:.6;cursor:not-allowed}
   .card.breve .thumb{filter:brightness(.5)}
   .card.breve::after{content:"EM BREVE";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.75);color:#fff;font-family:var(--mono);font-size:11px;letter-spacing:.15em;padding:5px 12px;border-radius:4px;z-index:3}
@@ -145,6 +156,17 @@
 
   .ajuda{display:none}
 
+  .fila-lista{padding:0 clamp(16px,4vw,56px);display:grid;gap:6px}
+  .fila-lista .it{background:linear-gradient(90deg,rgba(240,180,41,.1),var(--surface));border:1px solid rgba(240,180,41,.4);border-radius:6px;padding:12px 16px;display:flex;align-items:center;gap:12px}
+  .fila-lista .it .emj{font-size:24px;flex:0 0 auto}
+  .fila-lista .it .c{flex:1;min-width:0}
+  .fila-lista .it .n{font-weight:600;font-size:14px;color:var(--ink);display:block;line-height:1.3}
+  .fila-lista .it .s{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.06em;text-transform:uppercase}
+  .fila-lista .it .ir{text-decoration:none;color:var(--ink-2);font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line);padding:6px 10px;border-radius:4px}
+  .fila-lista .it .ir:hover{color:var(--ink);border-color:var(--ink-3)}
+  .fila-lista .it .rem{background:none;border:0;color:var(--ink-3);font-size:18px;cursor:pointer;padding:4px 8px}
+  .fila-lista .it .rem:hover{color:var(--late)}
+
   footer{margin-top:30px;padding:0 clamp(16px,4vw,56px);display:flex;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--ink-3)}
   footer button{background:none;border:0;padding:0;color:var(--ink-3);font:inherit;text-decoration:underline;cursor:pointer}
   footer button:hover{color:var(--ink)}
@@ -178,6 +200,10 @@
 <div id="telaFac">
   <section class="hero" id="hero"></section>
   <div id="linhas"></div>
+  <div id="fila-moodle-bloco" hidden>
+    <h2>⏳ Aguardando eu marcar no Moodle pra você</h2>
+    <div class="fila-lista" id="fila-lista"></div>
+  </div>
   <h2>Prazos da faculdade</h2>
   <div class="prazos" id="prazos"></div>
 </div>
@@ -392,8 +418,9 @@ var INICIO = TODAS.map(function(t){ return t.data; }).sort()[0];
 /* marcações */
 var CHAVE = "rotina-adrian-v1";
 var estado;
-try { estado = JSON.parse(localStorage.getItem(CHAVE)) || {feitos:{}, salvoEm:null}; }
-catch(e){ estado = {feitos:{}, salvoEm:null}; }
+try { estado = JSON.parse(localStorage.getItem(CHAVE)) || {feitos:{}, salvoEm:null, filaMoodle:{}}; }
+catch(e){ estado = {feitos:{}, salvoEm:null, filaMoodle:{}}; }
+if (!estado.filaMoodle) estado.filaMoodle = {};
 function feito(id){ return !!estado.feitos[id]; }
 function salvar(){
   estado.salvoEm = new Date().toISOString();
@@ -522,11 +549,13 @@ function renderHero(){
   });
 }
 
+function naFila(id){ return !!(estado.filaMoodle && estado.filaMoodle[id]); }
+
 function card(t){
   var local = temVideoLocal(t);
   var destino = urlDaTarefa(t);
   var a = document.createElement("a");
-  a.className = "card " + t.disc + (feito(t.id) ? " feito" : "") + (!local && !t.a ? " breve" : "");
+  a.className = "card " + t.disc + (feito(t.id) ? " feito" : "") + (naFila(t.id) ? " fila-moodle" : "");
   a.href = destino;
   if (!local) { a.target = "_blank"; a.rel = "noopener"; }
   var emoji = emojiAula(t);
@@ -536,21 +565,35 @@ function card(t){
   var ms = t.id.match(/live(\d+)/);
   if (ms) num = "L"+ms[1];
   var dd = t.prazo ? diasAte(t.prazo) : null;
-  var prazoTag = (t.prazo && !feito(t.id) && dd !== null && dd <= 14) ? '<span class="prazo-tag">'+(dd<0?"VENCEU":dd===0?"HOJE":dd+"D")+'</span>' : '';
+  var prazoTag = (t.prazo && !feito(t.id) && dd !== null && dd <= 14 && !naFila(t.id)) ? '<span class="prazo-tag">'+(dd<0?"VENCEU":dd===0?"HOJE":dd+"D")+'</span>' : '';
+  var tipo = local ? '🍿 vídeo-aula daqui' : '↗ no Moodle';
   a.innerHTML =
-    '<span class="selo">✓ Assistida</span>' + prazoTag +
+    '<span class="selo">✓ ASSISTIDA</span>' + prazoTag +
     '<div class="thumb">'+emoji+(num ? '<span class="num">'+num+'</span>' : '')+'</div>' +
+    '<div class="atos">' +
+      '<button type="button" data-ato="fiz" title="Já fiz essa — marca pra mim no Moodle">'+(naFila(t.id) ? '⏳ na fila' : '✅ já fiz')+'</button>' +
+      '<button type="button" data-ato="reset" title="Desmarcar">↺</button>' +
+    '</div>' +
     '<div class="over">' +
       '<p class="nm">'+t.nome.replace(/\s*\([^)]+\)\s*$/, "")+'</p>' +
-      '<span class="sb">'+DISC[t.disc].nome+(local ? ' · vídeo' : (/pdf|slide|apostila/i.test(t.nome) ? ' · material' : ' · no Moodle'))+'</span>' +
+      '<span class="sb">'+DISC[t.disc].nome+' · '+tipo+'</span>' +
     '</div>' +
     (feito(t.id) ? '<div class="barra" style="--p:100%"></div>' : '');
-  a.addEventListener("click", function(ev){
-    if (ev.shiftKey){
-      ev.preventDefault();
-      if (feito(t.id)) delete estado.feitos[t.id]; else estado.feitos[t.id] = true;
+
+  Array.from(a.querySelectorAll(".atos button")).forEach(function(b){
+    b.addEventListener("click", function(ev){
+      ev.preventDefault(); ev.stopPropagation();
+      if (b.dataset.ato === "fiz"){
+        if (!estado.filaMoodle) estado.filaMoodle = {};
+        if (!estado.feitos) estado.feitos = {};
+        estado.feitos[t.id] = true;
+        estado.filaMoodle[t.id] = { nome: t.nome, disc: t.disc, em: new Date().toISOString(), link: (t.a && t.a[0]) ? t.a[0][1] : null };
+      } else {
+        delete estado.feitos[t.id];
+        if (estado.filaMoodle) delete estado.filaMoodle[t.id];
+      }
       salvar(); render();
-    }
+    });
   });
   return a;
 }
@@ -560,12 +603,26 @@ function linhaCat(titulo, lista, extra){
   var el = document.createElement("div");
   el.className = "linha";
   var feitos = lista.filter(function(t){ return feito(t.id); }).length;
-  el.innerHTML = '<div class="cab"><h3></h3><span class="cont">'+feitos+'/'+lista.length+' '+(extra||"")+'</span></div>';
+  el.innerHTML = '<div class="cab"><h3></h3><span class="cont">'+feitos+'/'+lista.length+' '+(extra||"")+'</span></div>' +
+    '<div class="carr-wrap">' +
+      '<button class="seta esq" type="button" aria-label="Anterior">‹</button>' +
+      '<div class="carrossel"></div>' +
+      '<button class="seta dir" type="button" aria-label="Próximo">›</button>' +
+    '</div>';
   el.querySelector("h3").textContent = titulo;
-  var car = document.createElement("div");
-  car.className = "carrossel";
+  var car = el.querySelector(".carrossel");
   lista.forEach(function(t){ car.appendChild(card(t)); });
-  el.appendChild(car);
+
+  var esq = el.querySelector(".seta.esq"), dir = el.querySelector(".seta.dir");
+  function atualizarSetas(){
+    esq.disabled = car.scrollLeft < 4;
+    dir.disabled = car.scrollLeft + car.clientWidth >= car.scrollWidth - 4;
+  }
+  function scroll(dx){ car.scrollBy({left:dx, behavior:"smooth"}); setTimeout(atualizarSetas, 350); }
+  esq.addEventListener("click", function(){ scroll(-car.clientWidth * 0.8); });
+  dir.addEventListener("click", function(){ scroll(car.clientWidth * 0.8); });
+  car.addEventListener("scroll", atualizarSetas, {passive:true});
+  setTimeout(atualizarSetas, 50);
   return el;
 }
 
@@ -713,6 +770,35 @@ function renderCrono(){
   });
 }
 
+function renderFilaMoodle(){
+  var box = document.getElementById("fila-lista");
+  var bloco = document.getElementById("fila-moodle-bloco");
+  var ids = Object.keys(estado.filaMoodle || {});
+  if (!ids.length){ bloco.hidden = true; return; }
+  bloco.hidden = false;
+  box.innerHTML = "";
+  ids.forEach(function(id){
+    var dado = estado.filaMoodle[id];
+    var t = TODAS.find(function(x){ return x.id === id; });
+    var emj = t ? emojiAula(t) : "📝";
+    var link = (t && t.a && t.a[0]) ? t.a[0][1] : (dado.link || "#");
+    var el = document.createElement("div");
+    el.className = "it";
+    el.innerHTML = '<span class="emj">'+emj+'</span>' +
+      '<div class="c"><span class="n"></span><span class="s"></span></div>' +
+      '<a class="ir" target="_blank" rel="noopener">abrir no Moodle</a>' +
+      '<button class="rem" type="button" title="Tirar da fila">×</button>';
+    el.querySelector(".n").textContent = dado.nome;
+    el.querySelector(".s").textContent = (DISC[dado.disc] ? DISC[dado.disc].nome : dado.disc);
+    el.querySelector(".ir").href = link;
+    el.querySelector(".rem").addEventListener("click", function(){
+      delete estado.filaMoodle[id];
+      salvar(); render();
+    });
+    box.appendChild(el);
+  });
+}
+
 function renderSalvo(){
   var el = document.getElementById("salvo");
   if (!estado.salvoEm){ el.textContent = "nada marcado ainda · fica salvo neste navegador"; return; }
@@ -727,7 +813,7 @@ function render(){
   document.getElementById("aba-eng").setAttribute("aria-selected", ABA === "eng");
   document.getElementById("telaFac").hidden = ABA !== "fac";
   document.getElementById("telaEng").hidden = ABA !== "eng";
-  if (ABA === "fac"){ renderNetflix(); renderPrazos(); }
+  if (ABA === "fac"){ renderNetflix(); renderFilaMoodle(); renderPrazos(); }
   else { renderHoje(); renderCrono(); }
   renderSalvo();
 }
